@@ -24,6 +24,8 @@
 
   // Apply styles
   var styles = [
+    '.grabber--fail {',
+    '   color: indianred;}',
     '.grabber__btn {',
     '    border: 1px solid #555;',
     '    border-radius: 2px;',
@@ -41,7 +43,8 @@
     '   font-weight: 500;}',
     '.grabber__notification > #grabber__status {',
     '   margin-left: 5px;',
-    '   display: inline-block;}'
+    '   display: inline-block;',
+    '   color: #888;}'
   ]
   window.GM_addStyle(styles.join(''))
 
@@ -112,10 +115,17 @@
         method: 'GET',
         url: url,
         onload: function (response) {
-          var blob = response.responseText.match(re)[0]
-          var parsed = JSON.parse('{' + blob + '}')
-          dlAggregateLinks += parsed['sources'][0]['file'] + '\n'
-          resolve()
+          try {
+            var blob = response.responseText.match(re)[0]
+            var parsed = JSON.parse('{' + blob + '}')
+            dlAggregateLinks += parsed['sources'][0]['file'] + '\n'
+            resolve()
+          } catch (e) {
+            reject(e)
+          }
+        },
+        onerror: function (response) {
+          reject(response.responseText)
         }
       })
     })
@@ -131,27 +141,50 @@
       var xhr = new window.XMLHttpRequest()
       xhr.open('GET', '/ajax/episode/info?' + qParams, true)
       xhr.onload = function () {
-        if (this.status === 200) {
+        if (xhr.status === 200) {
           if (dlServerType === 'RapidVideo') {
-            getVideoLinksRV(JSON.parse(this.responseText)['target'])
-                .then(function () {
-                  resolve()
-                })
+            getVideoLinksRV(JSON.parse(this.responseText)[['target']])
+              .then(function () {
+                resolve()
+              })
+              .catch(function (e) {
+                reject(e)
+              })
           }
+        } else {
+          reject(xhr.statusText)
         }
+      }
+      xhr.onerror = function () {
+        console.log('error')
+        reject(xhr.statusText)
       }
       xhr.send()
     })
   }
 
+  /**
+   * This function requeue's the processGrabber to run after
+   * 2 seconds to avoid overloading the 9anime API and/or
+   * getting our IP flagged as bot.
+   */
+  function requeue () {
+    if (dlEpisodeIds.length !== 0) {
+      window.dlTimeout = setTimeout(processGrabber, 2000)
+    } else {
+      clearTimeout(window.dlTimeout)
+      dlInProgress = false
+      grabberStatus.innerHTML = 'All done. The completed links are copied to your clipboard.'
+      window.GM_setClipboard(dlAggregateLinks)
+    }
+  }
+
   /***
-   * Handles the grabbing process. Runs every 2 seconds to avoid
-   * overloading the 9anime API and/or getting our IP flagged as
-   * bot.
+   * Handles the grabbing process.
    */
   function processGrabber () {
     var epId = dlEpisodeIds.shift()
-    grabberStatus.innerText = 'Fetching: ' + epId
+    grabberStatus.innerHTML = 'Fetching ' + epId
 
     var data = {
       ts: ts,
@@ -171,16 +204,14 @@
       }
     }
     getGrabber(qParams)
-        .then(function () {
-          if (dlEpisodeIds.length !== 0) {
-            window.dlTimeout = setTimeout(processGrabber, 2000)
-          } else {
-            clearTimeout(window.dlTimeout)
-            dlInProgress = false
-            grabberStatus.innerText = 'All done. The links are copied to your clipboard.'
-            window.GM_setClipboard(dlAggregateLinks)
-          }
-        })
+      .then(function () {
+        grabberStatus.innerHTML = 'Completed ' + epId
+        requeue()
+      })
+      .catch(function () {
+        grabberStatus.innerHTML = '<span class="grabber--fail">Failed ' + epId + '</span>'
+        requeue()
+      })
   }
 
   /***
@@ -205,7 +236,7 @@
         dlEpisodeIds.push(epLinks[i].dataset['id'])
       }
       if (!dlInProgress) {
-        grabberStatus.innerText = 'starting grabber...'
+        grabberStatus.innerHTML = 'starting grabber...'
         dlServerType = this.dataset['type']
         dlInProgress = true
         dlAggregateLinks = ''
