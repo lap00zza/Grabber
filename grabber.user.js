@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Grabber
 // @namespace   https://github.com/lap00zza/
-// @version     0.1.0
+// @version     0.1.1
 // @description Grab links from 9anime!
 // @author      Jewel Mahanta
 // @icon        https://image.ibb.co/fnOY7k/icon48.png
@@ -55,7 +55,6 @@
   grabberStatus.id = 'grabber__status'
   grabberStatus.appendChild(document.createTextNode('ready! Press Grab All to start.'))
   statusLabel.appendChild(document.createTextNode('Grabber:'))
-
   statusContainer.appendChild(statusLabel)
   statusContainer.appendChild(grabberStatus)
   servers.insertBefore(statusContainer, servers.firstChild)
@@ -97,8 +96,10 @@
 
   /********************************************************************************************************************/
   /**
-   * This function fetches the RapidVideo page, does regex matching
-   * and gets the video links.
+   * This function does the following
+   * 1. fetch the RapidVideo page
+   * 2. regex match and get the video sources
+   * 3. get the video links
    * @param {string} url - The RapidVideo url to download videos
    */
   function getVideoLinksRV (url) {
@@ -112,10 +113,8 @@
         url: url,
         onload: function (response) {
           var blob = response.responseText.match(re)[0]
-
           var parsed = JSON.parse('{' + blob + '}')
           dlAggregateLinks += parsed['sources'][0]['file'] + '\n'
-          // grabberStatus.innerText = 'done'
           resolve()
         }
       })
@@ -128,8 +127,6 @@
    *    A list of query parameters to send to the API.
    */
   function getGrabber (qParams) {
-    // console.log(qParams)
-    // grabberStatus.innerText = qParams
     return new Promise(function (resolve, reject) {
       var xhr = new window.XMLHttpRequest()
       xhr.open('GET', '/ajax/episode/info?' + qParams, true)
@@ -154,7 +151,6 @@
    */
   function processGrabber () {
     var epId = dlEpisodeIds.shift()
-    // console.log('Fetching: ', epId)
     grabberStatus.innerText = 'Fetching: ' + epId
 
     var data = {
@@ -176,16 +172,12 @@
     }
     getGrabber(qParams)
         .then(function () {
-          // FIXME: the last episode is not grabbed
           if (dlEpisodeIds.length !== 0) {
             window.dlTimeout = setTimeout(processGrabber, 2000)
           } else {
             clearTimeout(window.dlTimeout)
             dlInProgress = false
-            // console.log('Grabber: completed')
             grabberStatus.innerText = 'All done. The links are copied to your clipboard.'
-
-            console.log(dlAggregateLinks)
             window.GM_setClipboard(dlAggregateLinks)
           }
         })
@@ -213,9 +205,7 @@
         dlEpisodeIds.push(epLinks[i].dataset['id'])
       }
       if (!dlInProgress) {
-        // console.log('Grabber: starting grabber...')
         grabberStatus.innerText = 'starting grabber...'
-
         dlServerType = this.dataset['type']
         dlInProgress = true
         dlAggregateLinks = ''
