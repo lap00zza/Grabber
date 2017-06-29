@@ -10,6 +10,7 @@
 // @match       *://9anime.tv/watch/*
 // @grant       GM_addStyle
 // @grant       GM_xmlhttpRequest
+// @grant       GM_setClipboard
 // @license     MIT License
 // ==/UserScript==
 (function () {
@@ -31,16 +32,40 @@
     '.grabber__btn:hover {',
     '    background-color: #111111;}',
     '.grabber__btn:active {',
-    '    background-color: #151515;}'
+    '    background-color: #151515;}',
+    '.grabber__notification {',
+    '   padding: 0 10px;',
+    '   margin-bottom: 10px;}',
+    '.grabber__notification > span {',
+    '   display: inline-block;',
+    '   font-weight: 500;}',
+    '.grabber__notification > #grabber__status {',
+    '   margin-left: 5px;',
+    '   display: inline-block;}'
   ]
   window.GM_addStyle(styles.join(''))
+
+  // Append the status bar
+  var servers = document.getElementById('servers')
+  var statusContainer = document.createElement('div')
+  var grabberStatus = document.createElement('div')
+  var statusLabel = document.createElement('span')
+
+  statusContainer.classList.add('grabber__notification')
+  grabberStatus.id = 'grabber__status'
+  grabberStatus.appendChild(document.createTextNode('ready! Press Grab All to start.'))
+  statusLabel.appendChild(document.createTextNode('Grabber:'))
+
+  statusContainer.appendChild(statusLabel)
+  statusContainer.appendChild(grabberStatus)
+  servers.insertBefore(statusContainer, servers.firstChild)
 
   /********************************************************************************************************************/
   // Token generation scheme for 9anime. The token
   // is used for _ value when sending any API requests.
   const DD = 'gIXCaNh' // This might change in the future
 
-  function s (t) {
+  function s(t) {
     var e
     var i = 0
     for (e = 0; e < t.length; e++) {
@@ -49,7 +74,7 @@
     return i
   }
 
-  function a (t, e) {
+  function a(t, e) {
     var i
     var n = 0
     for (i = 0; i < Math.max(t.length, e.length); i++) {
@@ -59,7 +84,7 @@
     return Number(n).toString(16)
   }
 
-  function generateToken (data, initialState) {
+  function generateToken(data, initialState) {
     var keys = Object.keys(data)
     var _ = s(DD) + (initialState || 0)
     for (var i = 0; i < keys.length; i++) {
@@ -76,20 +101,24 @@
    * and gets the video links.
    * @param {string} url - The RapidVideo url to download videos
    */
-  function getVideoLinksRV (url) {
+  function getVideoLinksRV(url) {
     var re = /("sources": \[)(.*)(}])/g
 
-    // We are using GM_xmlhttpRequest since we need to make
-    // cross origin requests.
-    window.GM_xmlhttpRequest({
-      method: 'GET',
-      url: url,
-      onload: function (response) {
-        var blob = response.responseText.match(re)[0]
+    return new Promise(function (resolve, reject) {
+      // We are using GM_xmlhttpRequest since we need to make
+      // cross origin requests.
+      window.GM_xmlhttpRequest({
+        method: 'GET',
+        url: url,
+        onload: function (response) {
+          var blob = response.responseText.match(re)[0]
 
-        var parsed = JSON.parse('{' + blob + '}')
-        dlAggregateLinks += parsed['sources'][0]['file'] + '\n'
-      }
+          var parsed = JSON.parse('{' + blob + '}')
+          dlAggregateLinks += parsed['sources'][0]['file'] + '\n'
+          // grabberStatus.innerText = 'done'
+          resolve();
+        }
+      })
     })
   }
 
@@ -98,18 +127,24 @@
    * @param {string} qParams
    *    A list of query parameters to send to the API.
    */
-  function getGrabber (qParams) {
-    console.log(qParams)
-    var xhr = new window.XMLHttpRequest()
-    xhr.open('GET', '/ajax/episode/info?' + qParams, true)
-    xhr.onload = function () {
-      if (this.status === 200) {
-        if (dlServerType === 'RapidVideo') {
-          getVideoLinksRV(JSON.parse(this.responseText)['target'])
+  function getGrabber(qParams) {
+    // console.log(qParams)
+    // grabberStatus.innerText = qParams
+    return new Promise(function (resolve, reject) {
+      var xhr = new window.XMLHttpRequest()
+      xhr.open('GET', '/ajax/episode/info?' + qParams, true)
+      xhr.onload = function () {
+        if (this.status === 200) {
+          if (dlServerType === 'RapidVideo') {
+            getVideoLinksRV(JSON.parse(this.responseText)['target'])
+                .then(function () {
+                  resolve()
+                });
+          }
         }
       }
-    }
-    xhr.send()
+      xhr.send()
+    })
   }
 
   /***
@@ -117,9 +152,11 @@
    * overloading the 9anime API and/or getting our IP flagged as
    * bot.
    */
-  function processGrabber () {
+  function processGrabber() {
     var epId = dlEpisodeIds.shift()
-    console.log('Fetching: ', epId)
+    // console.log('Fetching: ', epId)
+    grabberStatus.innerText = 'Fetching: ' + epId
+
     var data = {
       ts: ts,
       id: epId,
@@ -138,14 +175,20 @@
       }
     }
     getGrabber(qParams)
-    if (dlEpisodeIds.length !== 0) {
-      window.dlTimeout = setTimeout(processGrabber, 2000)
-    } else {
-      clearTimeout(window.dlTimeout)
-      dlInProgress = false
-      console.log('Grabber: completed')
-      console.log(dlAggregateLinks)
-    }
+        .then(function () {
+          // FIXME: the last episode is not grabbed
+          if (dlEpisodeIds.length !== 0) {
+            window.dlTimeout = setTimeout(processGrabber, 2000)
+          } else {
+            clearTimeout(window.dlTimeout)
+            dlInProgress = false
+            // console.log('Grabber: completed')
+            grabberStatus.innerText = 'All done. The links are copied to your clipboard.'
+
+            console.log(dlAggregateLinks)
+            window.GM_setClipboard(dlAggregateLinks)
+          }
+        })
   }
 
   /***
@@ -158,7 +201,7 @@
    * @returns {Element}
    *    Download All button for specified server
    */
-  function generateDlBtn (type) {
+  function generateDlBtn(type) {
     var dlBtn = document.createElement('button')
     dlBtn.dataset['type'] = type
     dlBtn.classList.add('grabber__btn')
@@ -170,7 +213,9 @@
         dlEpisodeIds.push(epLinks[i].dataset['id'])
       }
       if (!dlInProgress) {
-        console.log('Grabber: starting grabber...')
+        // console.log('Grabber: starting grabber...')
+        grabberStatus.innerText = 'starting grabber...'
+
         dlServerType = this.dataset['type']
         dlInProgress = true
         dlAggregateLinks = ''

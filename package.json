@@ -1,0 +1,28 @@
+{
+  "name": "grabber",
+  "version": "0.1.0",
+  "description": "Grab video links from 9anime",
+  "main": "grabber.user.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "linter": "standard"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lap00zza/Grabber.git"
+  },
+  "keywords": [
+    "9anime",
+    "download",
+    "video"
+  ],
+  "author": "Jewel Mahanta",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lap00zza/Grabber/issues"
+  },
+  "homepage": "https://github.com/lap00zza/Grabber#readme",
+  "devDependencies": {
+    "standard": "^10.0.2"
+  }
+}
