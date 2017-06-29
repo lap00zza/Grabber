@@ -119,7 +119,7 @@
    */
   function processGrabber () {
     var epId = dlEpisodeIds.shift()
-    console.log('Downloading: ', epId)
+    console.log('Fetching: ', epId)
     var data = {
       ts: ts,
       id: epId,
