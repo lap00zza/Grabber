@@ -65,7 +65,7 @@
   // is used for _ value when sending any API requests.
   const DD = 'gIXCaNh' // This might change in the future
 
-  function s(t) {
+  function s (t) {
     var e
     var i = 0
     for (e = 0; e < t.length; e++) {
@@ -74,7 +74,7 @@
     return i
   }
 
-  function a(t, e) {
+  function a (t, e) {
     var i
     var n = 0
     for (i = 0; i < Math.max(t.length, e.length); i++) {
@@ -84,7 +84,7 @@
     return Number(n).toString(16)
   }
 
-  function generateToken(data, initialState) {
+  function generateToken (data, initialState) {
     var keys = Object.keys(data)
     var _ = s(DD) + (initialState || 0)
     for (var i = 0; i < keys.length; i++) {
@@ -101,7 +101,7 @@
    * and gets the video links.
    * @param {string} url - The RapidVideo url to download videos
    */
-  function getVideoLinksRV(url) {
+  function getVideoLinksRV (url) {
     var re = /("sources": \[)(.*)(}])/g
 
     return new Promise(function (resolve, reject) {
@@ -116,7 +116,7 @@
           var parsed = JSON.parse('{' + blob + '}')
           dlAggregateLinks += parsed['sources'][0]['file'] + '\n'
           // grabberStatus.innerText = 'done'
-          resolve();
+          resolve()
         }
       })
     })
@@ -127,7 +127,7 @@
    * @param {string} qParams
    *    A list of query parameters to send to the API.
    */
-  function getGrabber(qParams) {
+  function getGrabber (qParams) {
     // console.log(qParams)
     // grabberStatus.innerText = qParams
     return new Promise(function (resolve, reject) {
@@ -139,7 +139,7 @@
             getVideoLinksRV(JSON.parse(this.responseText)['target'])
                 .then(function () {
                   resolve()
-                });
+                })
           }
         }
       }
@@ -152,7 +152,7 @@
    * overloading the 9anime API and/or getting our IP flagged as
    * bot.
    */
-  function processGrabber() {
+  function processGrabber () {
     var epId = dlEpisodeIds.shift()
     // console.log('Fetching: ', epId)
     grabberStatus.innerText = 'Fetching: ' + epId
@@ -201,7 +201,7 @@
    * @returns {Element}
    *    Download All button for specified server
    */
-  function generateDlBtn(type) {
+  function generateDlBtn (type) {
     var dlBtn = document.createElement('button')
     dlBtn.dataset['type'] = type
     dlBtn.classList.add('grabber__btn')
