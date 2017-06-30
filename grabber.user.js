@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Grabber
 // @namespace   https://github.com/lap00zza/
-// @version     0.2.0
+// @version     0.3.0
 // @description Grab links from 9anime!
 // @author      Jewel Mahanta
 // @icon        https://image.ibb.co/fnOY7k/icon48.png
@@ -13,9 +13,12 @@
 // @grant       GM_setClipboard
 // @license     MIT License
 // ==/UserScript==
+
+/* global GM_info, GM_addStyle, GM_xmlhttpRequest, GM_setClipboard */
+
 (function () {
   'use strict'
-  console.log('Grabber ' + window.GM_info.script.version + ' is now running!')
+  console.log('Grabber ' + GM_info.script.version + ' is now running!')
   var dlInProgress = false // global switch to indicate dl status
   var dlEpisodeIds = [] // list of id's currently being downloaded
   var dlServerType = '' // FIXME: cant queue different server types together
@@ -46,7 +49,7 @@
     '   display: inline-block;',
     '   color: #888;}'
   ]
-  window.GM_addStyle(styles.join(''))
+  GM_addStyle(styles.join(''))
 
   // Append the status bar
   var servers = document.getElementById('servers')
@@ -111,7 +114,7 @@
     return new Promise(function (resolve, reject) {
       // We are using GM_xmlhttpRequest since we need to make
       // cross origin requests.
-      window.GM_xmlhttpRequest({
+      GM_xmlhttpRequest({
         method: 'GET',
         url: url,
         onload: function (response) {
@@ -175,7 +178,7 @@
       clearTimeout(window.dlTimeout)
       dlInProgress = false
       grabberStatus.innerHTML = 'All done. The completed links are copied to your clipboard.'
-      window.GM_setClipboard(dlAggregateLinks)
+      GM_setClipboard(dlAggregateLinks)
     }
   }
 
