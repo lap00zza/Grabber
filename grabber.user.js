@@ -24,6 +24,17 @@
   var dlServerType = '' // FIXME: cant queue different server types together
   var dlAggregateLinks = '' // stores all the download links as a single string
   var ts = document.getElementsByTagName('body')[0].dataset['ts'] // ts is needed to send API requests
+  var animeName = document.querySelectorAll('h1.title')[0].innerText
+  // metadata stores relevant information about the
+  // downloaded videos. It is especially helpful in
+  // the case of RapidVideo where the filenames cant
+  // be modified using any url params and have to be
+  // renamed manually or by using a separate program
+  var metadata = {
+    animeName: animeName,
+    animeUrl: window.location.href,
+    files: []
+  }
 
   // Apply styles
   var styles = [
@@ -101,6 +112,38 @@
   }
 
   /********************************************************************************************************************/
+  /**
+   * Generates the name of the original mp4 file (RapidVideo).
+   * @param url
+   * @returns {*}
+   */
+  function generateRVOriginal (url) {
+    var re = /\/+[a-z0-9]+.mp4/gi
+    var match = url.match(re)
+    if (match.length > 0) {
+      // since the regex us something like this
+      // "/806FH0BFUQHP1LBGPWPZM.mp4" we need to
+      // remove the starting slash
+      return match[0].slice(1)
+    } else {
+      return ''
+    }
+  }
+
+  /**
+   * Generates a 3 digit episode id from the given
+   * id. This is id is helpful while sorting files.
+   * @param {string} num - The episode id
+   * @returns {string} - The 3 digit episode id
+   */
+  function pad (num) {
+    if (num.length >= 3) {
+      return num
+    } else {
+      return ('000' + num).slice(-3)
+    }
+  }
+
   /**
    * This function does the following
    * 1. fetch the RapidVideo page
@@ -183,6 +226,14 @@
     if (dlEpisodeIds.length !== 0) {
       window.dlTimeout = setTimeout(processGrabber, 2000)
     } else {
+      // Metadata only for RapidVideo
+      if (dlServerType === 'RapidVideo') {
+        // prepare the metadata
+        metadata['timestamp'] = new Date().toISOString()
+        metadata['server'] = dlServerType
+        console.log(metadata)
+      }
+
       clearTimeout(window.dlTimeout)
       dlInProgress = false
       grabberStatus.innerHTML = 'All done. The completed links are copied to your clipboard.'
@@ -194,12 +245,12 @@
    * Handles the grabbing process.
    */
   function processGrabber () {
-    var epId = dlEpisodeIds.shift()
-    grabberStatus.innerHTML = 'Fetching ' + epId
+    var ep = dlEpisodeIds.shift()
+    grabberStatus.innerHTML = 'Fetching ' + ep.num
 
     var data = {
       ts: ts,
-      id: epId,
+      id: ep.id,
       update: 0
     }
     data['_'] = generateToken(data)
@@ -220,17 +271,22 @@
           getVideoLinksRV(resp['target'])
             .then(function (resp) {
               dlAggregateLinks += resp[0]['file'] + '\n'
-              grabberStatus.innerHTML = 'Completed ' + epId
+              // Metadata only for RapidVideo
+              metadata.files.push({
+                original: generateRVOriginal(resp[0]['file']),
+                real: animeName + '-' + ep.num + '-' + resp[0]['label'] + '.mp4'
+              })
+              grabberStatus.innerHTML = 'Completed ' + ep.num
               requeue()
             })
             .catch(function () {
-              grabberStatus.innerHTML = '<span class="grabber--fail">Failed ' + epId + '</span>'
+              grabberStatus.innerHTML = '<span class="grabber--fail">Failed ' + ep.num + '</span>'
               requeue()
             })
         }
       })
       .catch(function () {
-        grabberStatus.innerHTML = '<span class="grabber--fail">Failed ' + epId + '</span>'
+        grabberStatus.innerHTML = '<span class="grabber--fail">Failed ' + ep.num + '</span>'
         requeue()
       })
   }
@@ -254,13 +310,20 @@
       var serverDiv = this.parentNode.parentNode
       var epLinks = serverDiv.getElementsByTagName('a')
       for (var i = 0; i < epLinks.length; i++) {
-        dlEpisodeIds.push(epLinks[i].dataset['id'])
+        dlEpisodeIds.push({
+          num: pad(epLinks[i].dataset['base']),
+          id: epLinks[i].dataset['id']
+        })
       }
       if (!dlInProgress) {
         grabberStatus.innerHTML = 'starting grabber...'
         dlServerType = this.dataset['type']
         dlInProgress = true
         dlAggregateLinks = ''
+        // Metadata only for RapidVideo
+        if (dlServerType === 'RapidVideo') {
+          metadata.files = []
+        }
         processGrabber()
       }
     })
