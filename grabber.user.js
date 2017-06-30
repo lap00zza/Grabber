@@ -107,6 +107,7 @@
    * 2. regex match and get the video sources
    * 3. get the video links
    * @param {string} url - The RapidVideo url to download videos
+   * @returns {Promise}
    */
   function getVideoLinksRV (url) {
     var re = /("sources": \[)(.*)(}])/g
@@ -121,8 +122,13 @@
           try {
             var blob = response.responseText.match(re)[0]
             var parsed = JSON.parse('{' + blob + '}')
-            dlAggregateLinks += parsed['sources'][0]['file'] + '\n'
-            resolve()
+            // the parsed structure is like this
+            // {
+            //   sources: [
+            //     {default: "true", file: "FILE_URL", label: "720p", res: "720"}
+            //   ]
+            // }
+            resolve(parsed['sources'])
           } catch (e) {
             reject(e)
           }
@@ -138,21 +144,23 @@
    * Get the grabber info from the 9anime API.
    * @param {string} qParams
    *    A list of query parameters to send to the API.
+   * @returns {Promise}
    */
   function getGrabber (qParams) {
     return new Promise(function (resolve, reject) {
       var xhr = new window.XMLHttpRequest()
       xhr.open('GET', '/ajax/episode/info?' + qParams, true)
       xhr.onload = function () {
+        // Some error codes don't trigger the
+        // onerror. So we make sure that we only
+        // parse the response text for 200.
         if (xhr.status === 200) {
-          if (dlServerType === 'RapidVideo') {
-            getVideoLinksRV(JSON.parse(this.responseText)[['target']])
-              .then(function () {
-                resolve()
-              })
-              .catch(function (e) {
-                reject(e)
-              })
+          try {
+            resolve(JSON.parse(xhr.responseText))
+          } catch (e) {
+            // This is when there is an error
+            // parsing the response text
+            reject(e)
           }
         } else {
           reject(xhr.statusText)
@@ -207,9 +215,19 @@
       }
     }
     getGrabber(qParams)
-      .then(function () {
-        grabberStatus.innerHTML = 'Completed ' + epId
-        requeue()
+      .then(function (resp) {
+        if (dlServerType === 'RapidVideo') {
+          getVideoLinksRV(resp['target'])
+            .then(function (resp) {
+              dlAggregateLinks += resp[0]['file'] + '\n'
+              grabberStatus.innerHTML = 'Completed ' + epId
+              requeue()
+            })
+            .catch(function () {
+              grabberStatus.innerHTML = '<span class="grabber--fail">Failed ' + epId + '</span>'
+              requeue()
+            })
+        }
       })
       .catch(function () {
         grabberStatus.innerHTML = '<span class="grabber--fail">Failed ' + epId + '</span>'
