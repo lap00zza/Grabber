@@ -38,6 +38,8 @@
 
   // Apply styles
   var styles = [
+    '#grabber__metadata-link {',
+    '   margin-left: 5px;}',
     '.grabber--fail {',
     '   color: indianred;}',
     '.grabber__btn {',
@@ -112,6 +114,19 @@
   }
 
   /********************************************************************************************************************/
+  var metadataUrl = null
+  function createMetadataFile () {
+    var data = new window.Blob([JSON.stringify(metadata, null, '\t')], {type: 'text/json'})
+    // If we are replacing a previously generated
+    // file we need to manually revoke the object
+    // URL to avoid memory leaks.
+    if (metadataUrl !== null) {
+      window.URL.revokeObjectURL(metadataUrl)
+    }
+    metadataUrl = window.URL.createObjectURL(data)
+    return metadataUrl
+  }
+
   /**
    * Generates the name of the original mp4 file (RapidVideo).
    * @param url
@@ -220,7 +235,10 @@
   /**
    * This function requeue's the processGrabber to run after
    * 2 seconds to avoid overloading the 9anime API and/or
-   * getting our IP flagged as bot.
+   * getting our IP flagged as bot. Once all the episodes are
+   * done, and if the server was RapidVideo, a link to
+   * download 'metadata.json' is added. This can then be used
+   * by other programs or the user to rename the files.
    */
   function requeue () {
     if (dlEpisodeIds.length !== 0) {
@@ -231,7 +249,12 @@
         // prepare the metadata
         metadata['timestamp'] = new Date().toISOString()
         metadata['server'] = dlServerType
-        console.log(metadata)
+        var a = document.createElement('a')
+        a.href = createMetadataFile()
+        a.id = 'grabber__metadata-link'
+        a.appendChild(document.createTextNode('metadata.json'))
+        a.download = 'metadata.json'
+        statusContainer.appendChild(a)
       }
 
       clearTimeout(window.dlTimeout)
@@ -274,7 +297,7 @@
               // Metadata only for RapidVideo
               metadata.files.push({
                 original: generateRVOriginal(resp[0]['file']),
-                real: animeName + '-' + ep.num + '-' + resp[0]['label'] + '.mp4'
+                real: animeName.toLowerCase() + '-ep_' + ep.num + '-' + resp[0]['label'].toLowerCase() + '.mp4'
               })
               grabberStatus.innerHTML = 'Completed ' + ep.num
               requeue()
@@ -320,10 +343,10 @@
         dlServerType = this.dataset['type']
         dlInProgress = true
         dlAggregateLinks = ''
+        var mLink = document.getElementById('grabber__metadata-link')
+        if (mLink) statusContainer.removeChild(mLink)
         // Metadata only for RapidVideo
-        if (dlServerType === 'RapidVideo') {
-          metadata.files = []
-        }
+        if (dlServerType === 'RapidVideo') metadata.files = []
         processGrabber()
       }
     })
