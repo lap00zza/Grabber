@@ -17,7 +17,7 @@ Grab everything!
 **If you get a Tampermonkey page requesting origin permission, remember to click allow.**
 
 ## What is metadata.json?
-> You can use [Renamer](https://github.com/lap00zza/Renamer) to bulk rename file using metadata.json
+> You can use [Renamer](https://github.com/lap00zza/Renamer) to bulk rename files using metadata.json
 
 ![metadata.json](https://image.ibb.co/iR0Mxk/metadata.png)
 
@@ -29,7 +29,7 @@ Its a small JSON file which helps you keep track of the files names. When you do
 	"files": [
 		{
 			"original": "bVTiwZTHZS2Lmme.mp4",
-			"real": "one piece film: gold-ep_001-standard.mp4"
+			"real": "one piece film_ gold-ep_001-standard.mp4"
 		}
 	],
 	"timestamp": "2017-06-30T15:01:15.622Z",
