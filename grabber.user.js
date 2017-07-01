@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Grabber
 // @namespace   https://github.com/lap00zza/
-// @version     0.4.0
+// @version     0.5.0
 // @description Grab links from 9anime!
 // @author      Jewel Mahanta
 // @icon        https://image.ibb.co/fnOY7k/icon48.png
@@ -114,6 +114,18 @@
   }
 
   /********************************************************************************************************************/
+  /**
+   * Just as the function name says!
+   * We replace the illegal characters with underscore (_)
+   *
+   * @param filename
+   * @returns {string}
+   */
+  function generateFileSafeString (filename) {
+    var re = /[\\/<>*?:"|]/gi
+    return filename.replace(re, '_')
+  }
+
   var metadataUrl = null
   function createMetadataFile () {
     var data = new window.Blob([JSON.stringify(metadata, null, '\t')], {type: 'text/json'})
@@ -294,10 +306,11 @@
           getVideoLinksRV(resp['target'])
             .then(function (resp) {
               dlAggregateLinks += resp[0]['file'] + '\n'
+              var fileSafeName = generateFileSafeString(animeName + '-ep_' + ep.num + '-' + resp[0]['label']) + '.mp4'
               // Metadata only for RapidVideo
               metadata.files.push({
                 original: generateRVOriginal(resp[0]['file']),
-                real: animeName.toLowerCase() + '-ep_' + ep.num + '-' + resp[0]['label'].toLowerCase() + '.mp4'
+                real: fileSafeName.toLowerCase()
               })
               grabberStatus.innerHTML = 'Completed ' + ep.num
               requeue()
