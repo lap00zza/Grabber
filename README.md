@@ -19,6 +19,8 @@ Grab everything!
 ## What is metadata.json?
 > You can use [Renamer](https://github.com/lap00zza/Renamer) to bulk rename file using metadata.json
 
+![metadata.json](https://image.ibb.co/iR0Mxk/metadata.png)
+
 Its a small JSON file which helps you keep track of the files names. When you download videos from servers like RapidVideo the file names are always cryptic. This is where `metadata.json` helps you out. This is how it looks like:
 ```json
 {
