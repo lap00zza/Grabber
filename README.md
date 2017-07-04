@@ -2,7 +2,7 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Build Status](https://travis-ci.org/lap00zza/Grabber.svg?branch=master)](https://travis-ci.org/lap00zza/Grabber)
 
-Grab everything! Currently support grabbing videos from **9anime** (ex: Server 4) and **RapidVideo**
+Grab everything! Currently support grabbing videos from **9anime** (ex: Server F4) and **RapidVideo**
 ![](https://image.ibb.co/cF7iEa/Grabber.png)
 ## Download
 * [Greasyfork](https://greasyfork.org/en/scripts/31010-grabber)
