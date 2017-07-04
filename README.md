@@ -1,6 +1,8 @@
-# Grabber
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![Build Status](https://travis-ci.org/lap00zza/Grabber.svg?branch=master)](https://travis-ci.org/lap00zza/Grabber)
+<p align="center"><img src="https://image.ibb.co/cZHgja/grabber_text.png"></p>
+<p align="center">
+	<a href="https://standardjs.com"><img alt="JavaScript Style Guide" src="https://img.shields.io/badge/code_style-standard-brightgreen.svg"></a>
+	<a href="https://travis-ci.org/lap00zza/Grabber"><img alt="Build Status" src="https://travis-ci.org/lap00zza/Grabber.svg?branch=master"></a>
+</p>
 
 Grab everything! Currently support grabbing videos from **9anime** (ex: Server F4) and **RapidVideo**
 ![](https://image.ibb.co/cF7iEa/Grabber.png)
