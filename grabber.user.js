@@ -20,13 +20,13 @@
   'use strict'
   console.log('Grabber ' + GM_info.script.version + ' is now running!')
   var dlInProgress = false // global switch to indicate dl status
-  var dlEpisodeIds = [] // list of id's currently being downloaded
+  var dlEpisodeIds = [] // list of id's currently being grabbed
   var dlServerType = '' // FIXME: cant queue different server types together
-  var dlAggregateLinks = '' // stores all the download links as a single string
+  var dlAggregateLinks = '' // stores all the grabbed links as a single string
   var ts = document.getElementsByTagName('body')[0].dataset['ts'] // ts is needed to send API requests
   var animeName = document.querySelectorAll('h1.title')[0].innerText
   // metadata stores relevant information about the
-  // downloaded videos. It is especially helpful in
+  // grabbed videos. It is especially helpful in
   // the case of RapidVideo where the filenames cant
   // be modified using any url params and have to be
   // renamed manually or by using a separate program
@@ -117,7 +117,6 @@
   /**
    * Just as the function name says!
    * We replace the illegal characters with underscore (_)
-   *
    * @param filename
    * @returns {string}
    */
@@ -127,6 +126,11 @@
   }
 
   var metadataUrl = null
+  /**
+   * This functions generates the blob for the `metadata.json`
+   * file and returns an url to this blob.
+   * @returns {string}
+   */
   function createMetadataFile () {
     var data = new window.Blob([JSON.stringify(metadata, null, '\t')], {type: 'text/json'})
     // If we are replacing a previously generated
@@ -137,6 +141,20 @@
     }
     metadataUrl = window.URL.createObjectURL(data)
     return metadataUrl
+  }
+
+  /**
+   * Generates a 3 digit episode id from the given
+   * id. This is id is helpful while sorting files.
+   * @param {string} num - The episode id
+   * @returns {string} - The 3 digit episode id
+   */
+  function pad (num) {
+    if (num.length >= 3) {
+      return num
+    } else {
+      return ('000' + num).slice(-3)
+    }
   }
 
   /**
@@ -158,25 +176,11 @@
   }
 
   /**
-   * Generates a 3 digit episode id from the given
-   * id. This is id is helpful while sorting files.
-   * @param {string} num - The episode id
-   * @returns {string} - The 3 digit episode id
-   */
-  function pad (num) {
-    if (num.length >= 3) {
-      return num
-    } else {
-      return ('000' + num).slice(-3)
-    }
-  }
-
-  /**
    * This function does the following
    * 1. fetch the RapidVideo page
    * 2. regex match and get the video sources
    * 3. get the video links
-   * @param {string} url - The RapidVideo url to download videos
+   * @param {string} url - The RapidVideo url to grab videos
    * @returns {Promise}
    */
   function getVideoLinksRV (url) {
@@ -277,7 +281,10 @@
   }
 
   /***
-   * Handles the grabbing process.
+   * This is the main function that handles the
+   * entire grabbing process. It is scheduled to
+   * run every 2 seconds by requeue.
+   * @todo: refactor this function and make it cleaner
    */
   function processGrabber () {
     var ep = dlEpisodeIds.shift()
@@ -328,14 +335,14 @@
   }
 
   /***
-   * Generates a nice looking 'Download All' button that are
+   * Generates a nice looking 'Grab All' button that are
    * added below the server labels.
    * @param {string} type
    *    The server type to generate this button for. Example:
    *    RapidVideo, Openload etc. Currently only support
    *    grabbing RapidVideo links.
    * @returns {Element}
-   *    Download All button for specified server
+   *    'Grab All' button for specified server
    */
   function generateDlBtn (type) {
     var dlBtn = document.createElement('button')
@@ -366,7 +373,7 @@
     return dlBtn
   }
 
-  // Attach the download button to RapidVideo for now.
+  // Attach the 'Grab All' button to RapidVideo for now.
   var serverLabels = document.querySelectorAll('.server.row > label')
   for (var i = 0; i < serverLabels.length; i++) {
     var serverLabel = serverLabels[i].innerText.trim()
