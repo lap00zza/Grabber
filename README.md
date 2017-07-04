@@ -2,8 +2,8 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Build Status](https://travis-ci.org/lap00zza/Grabber.svg?branch=master)](https://travis-ci.org/lap00zza/Grabber)
 
-Grab everything!
-
+Grab everything! Currently support grabbing videos from **9anime** (ex: Server 4) and **RapidVideo**
+![](https://image.ibb.co/cF7iEa/Grabber.png)
 ## Download
 * [Greasyfork](https://greasyfork.org/en/scripts/31010-grabber)
 
@@ -14,7 +14,7 @@ Grab everything!
 4. The Grab All button will appear near RapidVideo. Click it!
 5. Make sure to keep a download manager handy. The grabbed links will be copied to your clipboard.
 
-**If you get a Tampermonkey page requesting origin permission, remember to click allow.**
+:warning: **If you get a Tampermonkey page requesting origin permission, remember to click allow.**
 
 ## What is metadata.json?
 > You can use [Renamer](https://github.com/lap00zza/Renamer) to bulk rename files using metadata.json
