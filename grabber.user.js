@@ -18,10 +18,14 @@
 
 (function () {
   'use strict'
+  // TODO: convert anime names to Title Case
+  // TODO: add a option to select quality for 9anime server.
+  // right now it just grabs everything.
+
   console.log('Grabber ' + GM_info.script.version + ' is now running!')
   var dlInProgress = false // global switch to indicate dl status
   var dlEpisodeIds = [] // list of id's currently being grabbed
-  var dlServerType = '' // FIXME: cant queue different server types together
+  var dlServerType = ''
   var dlAggregateLinks = '' // stores all the grabbed links as a single string
   var ts = document.getElementsByTagName('body')[0].dataset['ts'] // ts is needed to send API requests
   var animeName = document.querySelectorAll('h1.title')[0].innerText
@@ -114,17 +118,19 @@
   }
 
   /********************************************************************************************************************/
+  // Utility functions
   /**
    * Just as the function name says!
-   * We replace the illegal characters with underscore (_)
+   * We remove the illegal characters.
    * @param filename
    * @returns {string}
    */
   function generateFileSafeString (filename) {
     var re = /[\\/<>*?:"|]/gi
-    return filename.replace(re, '_')
+    return filename.replace(re, '')
   }
 
+  // metadataUrl is a part of createMetadataFile
   var metadataUrl = null
   /**
    * This functions generates the blob for the `metadata.json`
@@ -157,6 +163,87 @@
     }
   }
 
+  /**
+   * Generate the query parameters from an object.
+   * @param {object} params
+   * @returns {string}
+   */
+  function generateQParams (params) {
+    var qParams = ''
+    var dKeys = Object.keys(params)
+    for (var i = 0; i < dKeys.length; i++) {
+      if (i === 0) {
+        qParams += dKeys[i] + '=' + params[dKeys[i]]
+      } else {
+        qParams += '&' + dKeys[i] + '=' + params[dKeys[i]]
+      }
+    }
+    return qParams
+  }
+
+  // parser is a part of getURL
+  var parser = document.createElement('a')
+  /**
+   * Get a url from a uri string.
+   * Credits to jlong for this implementation idea:
+   * https://gist.github.com/jlong/2428561
+   * @param {string} uriString
+   * @returns {string}
+   */
+  function getURL (uriString) {
+    parser.href = uriString
+    return parser.protocol + '//' + parser.hostname + parser.pathname
+  }
+
+  /**
+   * Converts the searchParams in then uri string to
+   * an object.
+   * @param {string} uriString
+   * @returns {object}
+   */
+  function searchParams2Obj (uriString) {
+    parser.href = uriString
+    // HTMLHyperlinkElementUtils.search returns a search
+    // string, also called a query string containing a '?'
+    // followed by the parameters of the URL. We don't need
+    // the '?' so we slice it.
+    var searchParams = parser.search.slice(1)
+    // All search params are delimited by '&'.
+    // So we split them into an array and iterate
+    // through it to get the keys and values.
+    var search = searchParams.split('&')
+    var searchObj = {}
+    for (var i = 0; i < search.length; i++) {
+      var searchSplit = search[i].split('=')
+      if (searchSplit[0] !== '' && searchSplit[1] !== undefined) {
+        searchObj[searchSplit[0]] = searchSplit[1]
+      }
+    }
+    return searchObj
+  }
+
+  /**
+   * A simple helper function that merges 2 objects.
+   * @param {object} obj1
+   * @param {object} obj2
+   * @returns {object}
+   */
+  function mergeObject (obj1, obj2) {
+    var obj3 = {}
+    for (var a in obj1) {
+      if (obj1.hasOwnProperty(a)) {
+        obj3[a] = obj1[a]
+      }
+    }
+    for (var b in obj2) {
+      if (obj2.hasOwnProperty(b)) {
+        obj3[b] = obj2[b]
+      }
+    }
+    return obj3
+  }
+
+  /********************************************************************************************************************/
   /**
    * Generates the name of the original mp4 file (RapidVideo).
    * @param url
@@ -215,15 +302,51 @@
   }
 
   /**
-   * Get the grabber info from the 9anime API.
-   * @param {string} qParams
+   * Fetch 9anime video links for Server F4 etc.
+   * @param {string} url
+   *    The 9anime url to grab videos
+   * @param {object} params
    *    A list of query parameters to send to the API.
    * @returns {Promise}
    */
-  function getGrabber (qParams) {
+  function getVideoLinks9a (url, params) {
     return new Promise(function (resolve, reject) {
       var xhr = new window.XMLHttpRequest()
-      xhr.open('GET', '/ajax/episode/info?' + qParams, true)
+      xhr.open('GET', url + '?' + generateQParams(params), true)
+      xhr.onload = function () {
+        // Some error codes don't trigger the
+        // onerror. So we make sure that we only
+        // parse the response text for 200.
+        if (xhr.status === 200) {
+          try {
+            resolve(JSON.parse(xhr.responseText))
+          } catch (e) {
+            // This is when there is an error
+            // parsing the response text
+            reject(e)
+          }
+        } else {
+          reject(xhr.statusText)
+        }
+      }
+      xhr.onerror = function () {
+        console.log('error')
+        reject(xhr.statusText)
+      }
+      xhr.send()
+    })
+  }
+
+  /**
+   * Get the grabber info from the 9anime API.
+   * @param {object} params
+   *    A list of query parameters to send to the API.
+   * @returns {Promise}
+   */
+  function getGrabber (params) {
+    return new Promise(function (resolve, reject) {
+      var xhr = new window.XMLHttpRequest()
+      xhr.open('GET', '/ajax/episode/info' + '?' + generateQParams(params), true)
       xhr.onload = function () {
         // Some error codes don't trigger the
         // onerror. So we make sure that we only
@@ -290,42 +413,72 @@
     var ep = dlEpisodeIds.shift()
     grabberStatus.innerHTML = 'Fetching ' + ep.num
 
-    var data = {
+    var params = {
       ts: ts,
       id: ep.id,
       update: 0
     }
-    data['_'] = generateToken(data)
+    params['_'] = generateToken(params)
 
-    // Generate the query parameters
-    var qParams = ''
-    var dKeys = Object.keys(data)
-    for (var i = 0; i < dKeys.length; i++) {
-      if (i === 0) {
-        qParams += dKeys[i] + '=' + data[dKeys[i]]
-      } else {
-        qParams += '&' + dKeys[i] + '=' + data[dKeys[i]]
-      }
-    }
-    getGrabber(qParams)
+    getGrabber(params)
       .then(function (resp) {
-        if (dlServerType === 'RapidVideo') {
-          getVideoLinksRV(resp['target'])
-            .then(function (resp) {
-              dlAggregateLinks += resp[0]['file'] + '\n'
-              var fileSafeName = generateFileSafeString(animeName + '-ep_' + ep.num + '-' + resp[0]['label']) + '.mp4'
-              // Metadata only for RapidVideo
-              metadata.files.push({
-                original: generateRVOriginal(resp[0]['file']),
-                real: fileSafeName.toLowerCase()
+        switch (dlServerType) {
+          case 'RapidVideo':
+            getVideoLinksRV(resp['target'])
+              .then(function (resp) {
+                dlAggregateLinks += resp[0]['file'] + '\n'
+                var fileSafeName = generateFileSafeString(animeName + '-ep_' + ep.num + '-' + resp[0]['label']) + '.mp4'
+                // Metadata only for RapidVideo
+                metadata.files.push({
+                  original: generateRVOriginal(resp[0]['file']),
+                  real: fileSafeName.toLowerCase()
+                })
+                grabberStatus.innerHTML = 'Completed ' + ep.num
+                requeue()
               })
-              grabberStatus.innerHTML = 'Completed ' + ep.num
-              requeue()
-            })
-            .catch(function () {
-              grabberStatus.innerHTML = '<span class="grabber--fail">Failed ' + ep.num + '</span>'
-              requeue()
-            })
+              .catch(function (e) {
+                console.debug(e)
+                grabberStatus.innerHTML = '<span class="grabber--fail">Failed ' + ep.num + '</span>'
+                requeue()
+              })
+            break
+
+          case '9anime':
+            var data = {
+              ts: ts,
+              id: resp['params']['id'],
+              options: resp['params']['options'],
+              token: resp['params']['token'],
+              mobile: 0
+            }
+            var url = getURL(resp['grabber'])
+            // The grabber url has additional search params
+            // we need to add those to 'data' before generating
+            // the token.
+            var sParams = searchParams2Obj(resp['grabber'])
+            var merged = mergeObject(data, sParams)
+            var initState = s(a(DD + url, ''))
+            merged['_'] = generateToken(merged, initState)
+            getVideoLinks9a(url, merged)
+              .then(function (resp) {
+                // resp is of the format
+                // {data: [{file: '', label: '', type: ''}], error: null, token: ''}
+                // data contains the files array.
+                var data = resp['data']
+                for (var i = 0; i < data.length; i++) {
+                  var title = generateFileSafeString(animeName + '-ep_' + ep.num + '-' + data[i]['label'])
+                  dlAggregateLinks += data[i]['file'] + '?&title=' + title.toLowerCase() +
+                    '&type=video/' + data[i]['type'] + '\n'
+                }
+                grabberStatus.innerHTML = 'Completed ' + ep.num
+                requeue()
+              })
+              .catch(function (e) {
+                console.debug(e)
+                grabberStatus.innerHTML = '<span class="grabber--fail">Failed ' + ep.num + '</span>'
+                requeue()
+              })
+            break
         }
       })
       .catch(function () {
@@ -376,10 +529,13 @@
   // Attach the 'Grab All' button to RapidVideo for now.
   var serverLabels = document.querySelectorAll('.server.row > label')
   for (var i = 0; i < serverLabels.length; i++) {
+    // Remove the leading and trailing whitespace
+    // from the server labels.
     var serverLabel = serverLabels[i].innerText.trim()
-    if (/^RapidVideo$/i.test(serverLabel)) {
-      console.log(serverLabels[i])
+    if (/RapidVideo/i.test(serverLabel)) {
       serverLabels[i].appendChild(generateDlBtn('RapidVideo'))
+    } else if (/Server\s+F/i.test(serverLabel)) {
+      serverLabels[i].appendChild(generateDlBtn('9anime'))
     }
   }
 })()
