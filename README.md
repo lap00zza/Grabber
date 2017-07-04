@@ -1,9 +1,19 @@
-# Grabber
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![Build Status](https://travis-ci.org/lap00zza/Grabber.svg?branch=master)](https://travis-ci.org/lap00zza/Grabber)
+<p align="center">
+	<a href="https://github.com/lap00zza/Grabber"><img src="https://image.ibb.co/mCLbja/grabber_text_small.png"></a>
+</p>
+<p align="center">
+	<a href="https://standardjs.com"><img alt="JavaScript Style Guide" src="https://img.shields.io/badge/code_style-standard-brightgreen.svg"></a>
+	<a href="https://travis-ci.org/lap00zza/Grabber"><img alt="Build Status" src="https://travis-ci.org/lap00zza/Grabber.svg?branch=master"></a>
+</p>
+<p align="center">
+	Grab episodes from 9anime!
+</p>
 
-Grab everything! Currently support grabbing videos from **9anime** (ex: Server F4) and **RapidVideo**
-![](https://image.ibb.co/cF7iEa/Grabber.png)
+## About
+Grabber allows you to fetch episode links from 9anime. It currently support grabbing videos from <strong>9anime Server</strong> (ex: Server F4) and <strong>RapidVideo</strong>. You can then couple these links with a download manager to download episodes in bulk.
+
+> ![](https://image.ibb.co/cF7iEa/Grabber.png)
+
 ## Download
 * [Greasyfork](https://greasyfork.org/en/scripts/31010-grabber)
 
