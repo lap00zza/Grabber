@@ -24,7 +24,7 @@ Grabber allows you to fetch episode links from 9anime. It currently support grab
 4. The Grab All button will appear near the Server. Click it!
 5. Make sure to keep a download manager handy. The grabbed links will be copied to your clipboard.
 
-> :information_source: Read [How to download episodes?](https://github.com/lap00zza/Grabber/wiki/How-to-download-episodes%3F) for more details.
+> :information_source: Read [How To Download Episodes](https://github.com/lap00zza/Grabber/wiki/How-To-Download-Episodes) for more details.
 
 > :warning: **If you get a Tampermonkey page requesting origin permission, remember to click allow.**
 
