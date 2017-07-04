@@ -12,7 +12,7 @@
 ## About
 Grabber allows you to fetch episode links from 9anime. It currently support grabbing videos from <strong>9anime Server</strong> (ex: Server F4) and <strong>RapidVideo</strong>. You can then couple these links with a download manager to download episodes in bulk.
 
-> ![](https://image.ibb.co/cF7iEa/Grabber.png)
+![](https://image.ibb.co/cF7iEa/Grabber.png)
 
 ## Download
 * [Greasyfork](https://greasyfork.org/en/scripts/31010-grabber)
@@ -29,8 +29,6 @@ Grabber allows you to fetch episode links from 9anime. It currently support grab
 > :warning: **If you get a Tampermonkey page requesting origin permission, remember to click allow.**
 
 ## What is metadata.json?
-> You can use [Renamer](https://github.com/lap00zza/Renamer) to bulk rename files using metadata.json
-
 ![metadata.json](https://image.ibb.co/iR0Mxk/metadata.png)
 
 Its a small JSON file which helps you keep track of the files names. When you download videos from servers like RapidVideo the file names are always cryptic. This is where `metadata.json` helps you out. This is how it looks like:
@@ -48,7 +46,7 @@ Its a small JSON file which helps you keep track of the files names. When you do
 	"server": "RapidVideo"
 }
 ```
-You can write a simple file renaming program and use this file to easily bulk rename all the downloaded files or manually copy paste.
+> You can use [Renamer](https://github.com/lap00zza/Renamer) to bulk rename files using metadata.json
 
 ## License
 [MIT](https://github.com/lap00zza/Grabber/blob/master/LICENSE)
