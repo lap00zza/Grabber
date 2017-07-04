@@ -21,10 +21,12 @@ Grabber allows you to fetch episode links from 9anime. It currently support grab
 1. Install a user script manager. I recommend [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
 2. Install Grabber
 3. Open any 9anime watch page. Example: [Shingeki No Kyojin 2](https://9anime.to/watch/shingeki-no-kyojin-season-2.3v16)
-4. The Grab All button will appear near RapidVideo. Click it!
+4. The Grab All button will appear near the Server. Click it!
 5. Make sure to keep a download manager handy. The grabbed links will be copied to your clipboard.
 
-:warning: **If you get a Tampermonkey page requesting origin permission, remember to click allow.**
+> :information_source: Read [How to download episodes?](https://github.com/lap00zza/Grabber/wiki/How-to-download-episodes%3F) for more details.
+
+> :warning: **If you get a Tampermonkey page requesting origin permission, remember to click allow.**
 
 ## What is metadata.json?
 > You can use [Renamer](https://github.com/lap00zza/Renamer) to bulk rename files using metadata.json
