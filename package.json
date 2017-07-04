@@ -1,6 +1,6 @@
 {
   "name": "grabber",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Grab video links from 9anime",
   "main": "grabber.user.js",
   "scripts": {
