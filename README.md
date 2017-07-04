@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="https://image.ibb.co/mCLbja/grabber_text_small.png">
+	<a href="https://github.com/lap00zza/Grabber"><img src="https://image.ibb.co/mCLbja/grabber_text_small.png"></a>
 </p>
 <p align="center">
 	<a href="https://standardjs.com"><img alt="JavaScript Style Guide" src="https://img.shields.io/badge/code_style-standard-brightgreen.svg"></a>
@@ -10,7 +10,7 @@
 </p>
 
 ## About
-Grabber allows you to fetch episode links from 9anime. It currently support grabbing videos from <strong>9anime</strong> (ex: Server F4) and <strong>RapidVideo</strong>. You can then couple these links with a download manager to download episodes in bulk.
+Grabber allows you to fetch episode links from 9anime. It currently support grabbing videos from <strong>9anime Server</strong> (ex: Server F4) and <strong>RapidVideo</strong>. You can then couple these links with a download manager to download episodes in bulk.
 
 > ![](https://image.ibb.co/cF7iEa/Grabber.png)
 
