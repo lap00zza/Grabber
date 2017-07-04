@@ -1,10 +1,9 @@
 <p align="center">
+	<img src="https://image.ibb.co/mCLbja/grabber_text_small.png">
+</p>
+<p align="center">
 	<a href="https://standardjs.com"><img alt="JavaScript Style Guide" src="https://img.shields.io/badge/code_style-standard-brightgreen.svg"></a>
 	<a href="https://travis-ci.org/lap00zza/Grabber"><img alt="Build Status" src="https://travis-ci.org/lap00zza/Grabber.svg?branch=master"></a>
-</p>
-<hr>
-<p align="center">
-	<img src="https://image.ibb.co/cZHgja/grabber_text.png">
 </p>
 <p align="center">
 	Grab episodes from 9anime.<br>Currently support grabbing videos from <strong>9anime</strong> (ex: Server F4) and <strong>RapidVideo</strong>
