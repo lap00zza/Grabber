@@ -30,6 +30,7 @@ Grabber allows you to fetch episode links from 9anime. It currently support grab
 
 ## What is metadata.json?
 ![metadata.json](https://image.ibb.co/iR0Mxk/metadata.png)
+> **You can use [Grabber Renamer](https://github.com/yumiris/grabber-renamer) by @yumiris to bulk rename files using metadata.json**
 
 Its a small JSON file which helps you keep track of the files names. When you download videos from servers like RapidVideo the file names are always cryptic. This is where `metadata.json` helps you out. This is how it looks like:
 ```json
@@ -46,7 +47,6 @@ Its a small JSON file which helps you keep track of the files names. When you do
 	"server": "RapidVideo"
 }
 ```
-> You can use [Renamer](https://github.com/lap00zza/Renamer) to bulk rename files using metadata.json
 
 ## License
 [MIT](https://github.com/lap00zza/Grabber/blob/master/LICENSE)
