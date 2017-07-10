@@ -28,7 +28,7 @@
   var dlServerType = ''
   var dlAggregateLinks = '' // stores all the grabbed links as a single string
   var ts = document.getElementsByTagName('body')[0].dataset['ts'] // ts is needed to send API requests
-  var animeName = document.querySelectorAll('h1.title')[0].innerText
+  var animeName = document.querySelectorAll('h1.title')[0].innerHTML
   // metadata stores relevant information about the
   // grabbed videos. It is especially helpful in
   // the case of RapidVideo where the filenames cant
