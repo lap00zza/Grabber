@@ -431,7 +431,7 @@
                 // Metadata only for RapidVideo
                 metadata.files.push({
                   original: generateRVOriginal(resp[0]['file']),
-                  real: fileSafeName.toLowerCase()
+                  real: fileSafeName
                 })
                 grabberStatus.innerHTML = 'Completed ' + ep.num
                 requeue()
@@ -467,7 +467,7 @@
                 var data = resp['data']
                 for (var i = 0; i < data.length; i++) {
                   var title = generateFileSafeString(animeName + '-ep_' + ep.num + '-' + data[i]['label'])
-                  dlAggregateLinks += data[i]['file'] + '?&title=' + title.toLowerCase() +
+                  dlAggregateLinks += data[i]['file'] + '?&title=' + title +
                     '&type=video/' + data[i]['type'] + '\n'
                 }
                 grabberStatus.innerHTML = 'Completed ' + ep.num
