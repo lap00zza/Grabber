@@ -320,6 +320,66 @@ function status(message) {
   document.getElementById('grabber__status').innerHTML = message;
 }
 
+// Disable inputs when grabbing begins.
+function disableInputs() {
+  document.getElementById('grabber__quality').setAttribute('disabled', 'disabled');
+  var btns = document.getElementsByClassName('grabber__btn');
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    for (var _iterator = btns[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var btn = _step.value;
+
+      btn.setAttribute('disabled', 'disabled');
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+}
+
+// Enable inputs once grabbing is done.
+function enableInputs() {
+  document.getElementById('grabber__quality').removeAttribute('disabled');
+  var btns = document.getElementsByClassName('grabber__btn');
+  var _iteratorNormalCompletion2 = true;
+  var _didIteratorError2 = false;
+  var _iteratorError2 = undefined;
+
+  try {
+    for (var _iterator2 = btns[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+      var btn = _step2.value;
+
+      btn.removeAttribute('disabled');
+    }
+  } catch (err) {
+    _didIteratorError2 = true;
+    _iteratorError2 = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+        _iterator2.return();
+      }
+    } finally {
+      if (_didIteratorError2) {
+        throw _iteratorError2;
+      }
+    }
+  }
+}
+
 /**
  * Prepares the metadata by adding some more relevant
  * keys, generates the metadata.json and appends it to
@@ -356,6 +416,7 @@ function requeue() {
 
     clearTimeout(window.dlTimeout);
     dlInProgress = false;
+    enableInputs(); /* Enable the buttons and quality select */
     status('All done. The completed links are copied to your clipboard.');
     GM_setClipboard(dlAggregateLinks);
   }
@@ -415,7 +476,6 @@ function processGrabber() {
             // links for the quality we select. Not all of them. If the
             // preferred quality is not present it wont grab any.
             if (data[i]['label'] === dlQuality) {
-              console.log('...');
               var title = utils.fileSafeString(animeName + '-ep_' + ep.num + '-' + data[i]['label']);
               dlAggregateLinks += data[i]['file'] + '?&title=' + title + '&type=video/' + data[i]['type'] + '\n';
             }
@@ -468,6 +528,7 @@ function generateDlBtn(type) {
       dlInProgress = true;
       dlAggregateLinks = '';
       dlQuality = document.getElementById('grabber__quality').value;
+      disableInputs(); /* disable the buttons and quality select */
       var mLink = document.getElementById('grabber__metadata-link');
       if (mLink) statusContainer.removeChild(mLink);
       // Metadata only for RapidVideo
@@ -672,9 +733,9 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = applyStyle;
 /* global GM_addStyle */
 
-var styles = ['#grabber__metadata-link {', '   margin-left: 5px;}', '.grabber--fail {', '   color: indianred;}', '.grabber__btn {', '    border: 1px solid #555;', '    border-radius: 2px;', '    background-color: #16151c;', '    margin-top: 5px;}', '.grabber__btn:hover {', '    background-color: #111111;}', '.grabber__btn:active {', '    background-color: #151515;}', '.grabber__notification {', '   padding: 0 10px;', '   margin-bottom: 10px;}', '.grabber__notification > span {', '   display: inline-block;', '   font-weight: 500;}', '.grabber__notification > #grabber__status {', '   margin-left: 5px;', '   display: inline-block;', '   color: #888;}', '#grabber__quality {', '   background: inherit;' + '   border: 0;}', 'grabber__quality > option {', '   background: #16151c;}'];
+var styles = "#grabber__metadata-link {\n    margin-left: 5px;\n  }\n  .grabber--fail {\n    color: indianred;\n  }\n  .grabber__btn {\n    border: 1px solid #555;\n    border-radius: 2px;\n    background-color: #16151c;\n    margin-top: 5px;\n  }\n  .grabber__btn:hover {\n    background-color: #111111;\n  }\n  .grabber__btn:active {\n    background-color: #151515;\n  }\n  .grabber__notification {\n    padding: 0 10px;\n    margin-bottom: 10px;\n  }\n  .grabber__notification > span {\n    display: inline-block;\n    font-weight: 500;\n  }\n  .grabber__notification > #grabber__status {\n    margin-left: 5px;\n    display: inline-block;\n    color: #888;\n  }\n  #grabber__quality {\n    background: inherit;\n    border: 0;\n  }\n  grabber__quality > option {\n    background: #16151c;\n  }";
 function applyStyle() {
-  GM_addStyle(styles.join(''));
+  GM_addStyle(styles);
 }
 
 /***/ })

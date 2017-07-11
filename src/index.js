@@ -56,6 +56,24 @@ function status (message) {
   document.getElementById('grabber__status').innerHTML = message
 }
 
+// Disable inputs when grabbing begins.
+function disableInputs () {
+  document.getElementById('grabber__quality').setAttribute('disabled', 'disabled')
+  let btns = document.getElementsByClassName('grabber__btn')
+  for (let btn of btns) {
+    btn.setAttribute('disabled', 'disabled')
+  }
+}
+
+// Enable inputs once grabbing is done.
+function enableInputs () {
+  document.getElementById('grabber__quality').removeAttribute('disabled')
+  let btns = document.getElementsByClassName('grabber__btn')
+  for (let btn of btns) {
+    btn.removeAttribute('disabled')
+  }
+}
+
 /**
  * Prepares the metadata by adding some more relevant
  * keys, generates the metadata.json and appends it to
@@ -92,6 +110,7 @@ function requeue () {
 
     clearTimeout(window.dlTimeout)
     dlInProgress = false
+    enableInputs() /* Enable the buttons and quality select */
     status('All done. The completed links are copied to your clipboard.')
     GM_setClipboard(dlAggregateLinks)
   }
@@ -155,7 +174,6 @@ function processGrabber () {
                 // links for the quality we select. Not all of them. If the
                 // preferred quality is not present it wont grab any.
                 if (data[i]['label'] === dlQuality) {
-                  console.log('...')
                   let title = utils.fileSafeString(`${animeName}-ep_${ep.num}-${data[i]['label']}`)
                   dlAggregateLinks += `${data[i]['file']}?&title=${title}&type=video/${data[i]['type']}\n`
                 }
@@ -210,6 +228,7 @@ function generateDlBtn (type) {
       dlInProgress = true
       dlAggregateLinks = ''
       dlQuality = document.getElementById('grabber__quality').value
+      disableInputs() /* disable the buttons and quality select */
       let mLink = document.getElementById('grabber__metadata-link')
       if (mLink) statusContainer.removeChild(mLink)
       // Metadata only for RapidVideo
