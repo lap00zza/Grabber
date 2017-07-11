@@ -1,0 +1,15 @@
+// ==UserScript==
+// @name        Grabber
+// @namespace   https://github.com/lap00zza/
+// @version     0.6.0
+// @description Grab links from 9anime!
+// @author      Jewel Mahanta
+// @icon        https://image.ibb.co/fnOY7k/icon48.png
+// @match       *://9anime.to/watch/*
+// @match       *://9anime.is/watch/*
+// @match       *://9anime.tv/watch/*
+// @grant       GM_addStyle
+// @grant       GM_xmlhttpRequest
+// @grant       GM_setClipboard
+// @license     MIT License
+// ==/UserScript==

@@ -5,7 +5,8 @@
   "main": "grabber.user.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "linter": "standard"
+    "linter": "standard src/**/*.js",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,10 @@
   },
   "homepage": "https://github.com/lap00zza/Grabber#readme",
   "devDependencies": {
-    "standard": "^10.0.2"
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-preset-env": "^1.6.0",
+    "standard": "^10.0.2",
+    "webpack": "^3.1.0"
   }
 }
