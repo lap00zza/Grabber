@@ -1,19 +1,26 @@
-/* global GM_info, GM_addStyle, GM_setClipboard */
+/* global GM_info, GM_setClipboard */
 /* eslint prefer-arrow-callback: "error" */
 /* eslint-env es6 */
 
 import * as api from './api'
+import applyStyle from './style'
 import * as utils from './utils'
 
 console.log('Grabber ' + GM_info.script.version + ' is now running!')
+
+// Welcome folks! This is the main script for Grabber.
+// Below are a few terminologies that you will find
+// helpful.
+// dl -> Download
+// rv -> RapidVideo
+// 9a -> 9anime
+
 let dlInProgress = false // global switch to indicate dl status
 let dlEpisodeIds = [] // list of id's currently being grabbed
 let dlServerType = ''
 let dlAggregateLinks = '' // stores all the grabbed links as a single string
 let ts = document.getElementsByTagName('body')[0].dataset['ts'] // ts is needed to send API requests
 let animeName = document.querySelectorAll('h1.title')[0].innerHTML
-// metadata stores relevant information about the
-// grabbed videos.
 let metadata = {
   animeName: animeName,
   animeUrl: window.location.href,
@@ -21,39 +28,20 @@ let metadata = {
 }
 
 // Apply styles
-let styles = [
-  '#grabber__metadata-link {',
-  '   margin-left: 5px;}',
-  '.grabber--fail {',
-  '   color: indianred;}',
-  '.grabber__btn {',
-  '    border: 1px solid #555;',
-  '    border-radius: 2px;',
-  '    background-color: #16151c;',
-  '    margin-top: 5px;}',
-  '.grabber__btn:hover {',
-  '    background-color: #111111;}',
-  '.grabber__btn:active {',
-  '    background-color: #151515;}',
-  '.grabber__notification {',
-  '   padding: 0 10px;',
-  '   margin-bottom: 10px;}',
-  '.grabber__notification > span {',
-  '   display: inline-block;',
-  '   font-weight: 500;}',
-  '.grabber__notification > #grabber__status {',
-  '   margin-left: 5px;',
-  '   display: inline-block;',
-  '   color: #888;}'
-]
-GM_addStyle(styles.join(''))
+applyStyle()
 
 // Append the status bar
 let servers = document.getElementById('servers')
 let statusContainer = document.createElement('div')
 statusContainer.classList.add('grabber__notification')
 statusContainer.innerHTML =
-  `<span>Grabber:</span>
+  `<select>
+      <option value="360">360p</option>
+      <option value="480">480p</option>
+      <option value="720">720p</option>
+      <option value="1080">1080p</option>
+  </select>
+  <span>Grabber:</span>
   <div id="grabber__status">ready! Press Grab All to start.</div>`
 servers.insertBefore(statusContainer, servers.firstChild)
 
