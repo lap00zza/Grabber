@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Grabber
 // @namespace   https://github.com/lap00zza/
-// @version     0.6.0
+// @version     0.7.0
 // @description Grab links from 9anime!
 // @author      Jewel Mahanta
 // @icon        https://image.ibb.co/fnOY7k/icon48.png
