@@ -35,13 +35,13 @@ let servers = document.getElementById('servers')
 let statusContainer = document.createElement('div')
 statusContainer.classList.add('grabber__notification')
 statusContainer.innerHTML =
-  `<select>
-      <option value="360">360p</option>
-      <option value="480">480p</option>
-      <option value="720">720p</option>
-      <option value="1080">1080p</option>
-  </select>
-  <span>Grabber:</span>
+  // `<select>
+  //     <option value="360">360p</option>
+  //     <option value="480">480p</option>
+  //     <option value="720">720p</option>
+  //     <option value="1080">1080p</option>
+  // </select>
+  `<span>Grabber:</span>
   <div id="grabber__status">ready! Press Grab All to start.</div>`
 servers.insertBefore(statusContainer, servers.firstChild)
 
