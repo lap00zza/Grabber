@@ -265,39 +265,57 @@ var _api = __webpack_require__(2);
 
 var api = _interopRequireWildcard(_api);
 
+var _style = __webpack_require__(3);
+
+var _style2 = _interopRequireDefault(_style);
+
 var _utils = __webpack_require__(0);
 
 var utils = _interopRequireWildcard(_utils);
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-/* global GM_info, GM_addStyle, GM_setClipboard */
+console.log('Grabber ' + GM_info.script.version + ' is now running!');
+
+// Welcome folks! This is the main script for Grabber.
+// Below are a few terminologies that you will find
+// helpful.
+// dl -> Download
+// rv -> RapidVideo
+// 9a -> 9anime
+
+/* global GM_info, GM_setClipboard */
 /* eslint prefer-arrow-callback: "error" */
 /* eslint-env es6 */
 
-console.log('Grabber ' + GM_info.script.version + ' is now running!');
 var dlInProgress = false; // global switch to indicate dl status
 var dlEpisodeIds = []; // list of id's currently being grabbed
 var dlServerType = '';
 var dlAggregateLinks = ''; // stores all the grabbed links as a single string
 var ts = document.getElementsByTagName('body')[0].dataset['ts']; // ts is needed to send API requests
 var animeName = document.querySelectorAll('h1.title')[0].innerHTML;
-// metadata stores relevant information about the
-// grabbed videos.
 var metadata = {
   animeName: animeName,
   animeUrl: window.location.href,
   files: []
 
   // Apply styles
-};var styles = ['#grabber__metadata-link {', '   margin-left: 5px;}', '.grabber--fail {', '   color: indianred;}', '.grabber__btn {', '    border: 1px solid #555;', '    border-radius: 2px;', '    background-color: #16151c;', '    margin-top: 5px;}', '.grabber__btn:hover {', '    background-color: #111111;}', '.grabber__btn:active {', '    background-color: #151515;}', '.grabber__notification {', '   padding: 0 10px;', '   margin-bottom: 10px;}', '.grabber__notification > span {', '   display: inline-block;', '   font-weight: 500;}', '.grabber__notification > #grabber__status {', '   margin-left: 5px;', '   display: inline-block;', '   color: #888;}'];
-GM_addStyle(styles.join(''));
+};(0, _style2.default)();
 
 // Append the status bar
 var servers = document.getElementById('servers');
 var statusContainer = document.createElement('div');
 statusContainer.classList.add('grabber__notification');
-statusContainer.innerHTML = '<span>Grabber:</span>\n  <div id="grabber__status">ready! Press Grab All to start.</div>';
+statusContainer.innerHTML =
+// `<select>
+//     <option value="360">360p</option>
+//     <option value="480">480p</option>
+//     <option value="720">720p</option>
+//     <option value="1080">1080p</option>
+// </select>
+'<span>Grabber:</span>\n  <div id="grabber__status">ready! Press Grab All to start.</div>';
 servers.insertBefore(statusContainer, servers.firstChild);
 
 /**
@@ -310,7 +328,7 @@ function status(message) {
 
 /**
  * Prepares the metadata by adding some more relevant
- * keys, generates the metadata.json and appeds it to
+ * keys, generates the metadata.json and appends it to
  * the status bar.
  */
 function prepareMetadata() {
@@ -638,6 +656,24 @@ function rvOriginal(url) {
   } else {
     return '';
   }
+}
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = applyStyle;
+/* global GM_addStyle */
+
+var styles = ['#grabber__metadata-link {', '   margin-left: 5px;}', '.grabber--fail {', '   color: indianred;}', '.grabber__btn {', '    border: 1px solid #555;', '    border-radius: 2px;', '    background-color: #16151c;', '    margin-top: 5px;}', '.grabber__btn:hover {', '    background-color: #111111;}', '.grabber__btn:active {', '    background-color: #151515;}', '.grabber__notification {', '   padding: 0 10px;', '   margin-bottom: 10px;}', '.grabber__notification > span {', '   display: inline-block;', '   font-weight: 500;}', '.grabber__notification > #grabber__status {', '   margin-left: 5px;', '   display: inline-block;', '   color: #888;}'];
+function applyStyle() {
+  GM_addStyle(styles.join(''));
 }
 
 /***/ })

@@ -55,7 +55,7 @@ function status (message) {
 
 /**
  * Prepares the metadata by adding some more relevant
- * keys, generates the metadata.json and appeds it to
+ * keys, generates the metadata.json and appends it to
  * the status bar.
  */
 function prepareMetadata () {
