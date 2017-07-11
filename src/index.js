@@ -35,13 +35,15 @@ let servers = document.getElementById('servers')
 let statusContainer = document.createElement('div')
 statusContainer.classList.add('grabber__notification')
 statusContainer.innerHTML =
-  // `<select>
-  //     <option value="360">360p</option>
-  //     <option value="480">480p</option>
-  //     <option value="720">720p</option>
-  //     <option value="1080">1080p</option>
-  // </select>
-  `<span>Grabber:</span>
+  `<span>Grabber ★</span>
+  <span>Quality:</span>
+  <select id="grabber__quality">
+      <option value="360p">360p</option>
+      <option value="480p">480p</option>
+      <option value="720p">720p</option>
+      <option value="1080p">1080p</option>
+  </select>
+  <span>Status:</span>
   <div id="grabber__status">ready! Press Grab All to start.</div>`
 servers.insertBefore(statusContainer, servers.firstChild)
 
@@ -147,9 +149,16 @@ function processGrabber () {
               // {data: [{file: '', label: '', type: ''}], error: null, token: ''}
               // data contains the files array.
               let data = resp['data']
+              let quality = document.getElementById('grabber__quality').value /* preferred quality */
               for (let i = 0; i < data.length; i++) {
-                let title = utils.fileSafeString(`${animeName}-ep_${ep.num}-${data[i]['label']}`)
-                dlAggregateLinks += `${data[i]['file']}?&title=${title}&type=video/${data[i]['type']}\n`
+                // NOTE: this part is basically making sure that we only get
+                // links for the quality we select. Not all of them. If the
+                // preferred quality is not present it wont grab any.
+                if (data[i]['label'] === quality) {
+                  console.log('...')
+                  let title = utils.fileSafeString(`${animeName}-ep_${ep.num}-${data[i]['label']}`)
+                  dlAggregateLinks += `${data[i]['file']}?&title=${title}&type=video/${data[i]['type']}\n`
+                }
               }
               status('Completed ' + ep.num)
               requeue()

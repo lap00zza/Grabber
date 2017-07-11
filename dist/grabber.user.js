@@ -308,14 +308,7 @@ var metadata = {
 var servers = document.getElementById('servers');
 var statusContainer = document.createElement('div');
 statusContainer.classList.add('grabber__notification');
-statusContainer.innerHTML =
-// `<select>
-//     <option value="360">360p</option>
-//     <option value="480">480p</option>
-//     <option value="720">720p</option>
-//     <option value="1080">1080p</option>
-// </select>
-'<span>Grabber:</span>\n  <div id="grabber__status">ready! Press Grab All to start.</div>';
+statusContainer.innerHTML = '<span>Grabber \u2605</span>\n  <span>Quality:</span>\n  <select id="grabber__quality">\n      <option value="360p">360p</option>\n      <option value="480p">480p</option>\n      <option value="720p">720p</option>\n      <option value="1080p">1080p</option>\n  </select>\n  <span>Status:</span>\n  <div id="grabber__status">ready! Press Grab All to start.</div>';
 servers.insertBefore(statusContainer, servers.firstChild);
 
 /**
@@ -416,9 +409,16 @@ function processGrabber() {
           // {data: [{file: '', label: '', type: ''}], error: null, token: ''}
           // data contains the files array.
           var data = resp['data'];
+          var quality = document.getElementById('grabber__quality').value; /* preferred quality */
           for (var i = 0; i < data.length; i++) {
-            var title = utils.fileSafeString(animeName + '-ep_' + ep.num + '-' + data[i]['label']);
-            dlAggregateLinks += data[i]['file'] + '?&title=' + title + '&type=video/' + data[i]['type'] + '\n';
+            // NOTE: this part is basically making sure that we only get
+            // links for the quality we select. Not all of them. If the
+            // preferred quality is not present it wont grab any.
+            if (data[i]['label'] === quality) {
+              console.log('...');
+              var title = utils.fileSafeString(animeName + '-ep_' + ep.num + '-' + data[i]['label']);
+              dlAggregateLinks += data[i]['file'] + '?&title=' + title + '&type=video/' + data[i]['type'] + '\n';
+            }
           }
           status('Completed ' + ep.num);
           requeue();
@@ -671,7 +671,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = applyStyle;
 /* global GM_addStyle */
 
-var styles = ['#grabber__metadata-link {', '   margin-left: 5px;}', '.grabber--fail {', '   color: indianred;}', '.grabber__btn {', '    border: 1px solid #555;', '    border-radius: 2px;', '    background-color: #16151c;', '    margin-top: 5px;}', '.grabber__btn:hover {', '    background-color: #111111;}', '.grabber__btn:active {', '    background-color: #151515;}', '.grabber__notification {', '   padding: 0 10px;', '   margin-bottom: 10px;}', '.grabber__notification > span {', '   display: inline-block;', '   font-weight: 500;}', '.grabber__notification > #grabber__status {', '   margin-left: 5px;', '   display: inline-block;', '   color: #888;}'];
+var styles = ['#grabber__metadata-link {', '   margin-left: 5px;}', '.grabber--fail {', '   color: indianred;}', '.grabber__btn {', '    border: 1px solid #555;', '    border-radius: 2px;', '    background-color: #16151c;', '    margin-top: 5px;}', '.grabber__btn:hover {', '    background-color: #111111;}', '.grabber__btn:active {', '    background-color: #151515;}', '.grabber__notification {', '   padding: 0 10px;', '   margin-bottom: 10px;}', '.grabber__notification > span {', '   display: inline-block;', '   font-weight: 500;}', '.grabber__notification > #grabber__status {', '   margin-left: 5px;', '   display: inline-block;', '   color: #888;}', '#grabber__quality {', '   background: inherit;' + '   border: 0;}', 'grabber__quality > option {', '   background: #16151c;}'];
 function applyStyle() {
   GM_addStyle(styles.join(''));
 }

@@ -23,7 +23,12 @@ let styles = [
   '.grabber__notification > #grabber__status {',
   '   margin-left: 5px;',
   '   display: inline-block;',
-  '   color: #888;}'
+  '   color: #888;}',
+  '#grabber__quality {',
+  '   background: inherit;' +
+  '   border: 0;}',
+  'grabber__quality > option {',
+  '   background: #16151c;}'
 ]
 export default function applyStyle () {
   GM_addStyle(styles.join(''))
