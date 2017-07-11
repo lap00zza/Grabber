@@ -60,8 +60,8 @@ function status (message) {
 function disableInputs () {
   document.getElementById('grabber__quality').setAttribute('disabled', 'disabled')
   let btns = document.getElementsByClassName('grabber__btn')
-  for (let btn of btns) {
-    btn.setAttribute('disabled', 'disabled')
+  for (let i = 0; i < btns.length; i++) {
+    btns[i].setAttribute('disabled', 'disabled')
   }
 }
 
@@ -69,8 +69,8 @@ function disableInputs () {
 function enableInputs () {
   document.getElementById('grabber__quality').removeAttribute('disabled')
   let btns = document.getElementsByClassName('grabber__btn')
-  for (let btn of btns) {
-    btn.removeAttribute('disabled')
+  for (let i = 0; i < btns.length; i++) {
+    btns[i].removeAttribute('disabled')
   }
 }
 
