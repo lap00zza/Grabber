@@ -19,6 +19,7 @@ let dlInProgress = false // global switch to indicate dl status
 let dlEpisodeIds = [] // list of id's currently being grabbed
 let dlServerType = ''
 let dlAggregateLinks = '' // stores all the grabbed links as a single string
+let dlQuality = '360p' /* preferred quality */
 let ts = document.getElementsByTagName('body')[0].dataset['ts'] // ts is needed to send API requests
 let animeName = document.querySelectorAll('h1.title')[0].innerHTML
 let metadata = {
@@ -149,12 +150,11 @@ function processGrabber () {
               // {data: [{file: '', label: '', type: ''}], error: null, token: ''}
               // data contains the files array.
               let data = resp['data']
-              let quality = document.getElementById('grabber__quality').value /* preferred quality */
               for (let i = 0; i < data.length; i++) {
                 // NOTE: this part is basically making sure that we only get
                 // links for the quality we select. Not all of them. If the
                 // preferred quality is not present it wont grab any.
-                if (data[i]['label'] === quality) {
+                if (data[i]['label'] === dlQuality) {
                   console.log('...')
                   let title = utils.fileSafeString(`${animeName}-ep_${ep.num}-${data[i]['label']}`)
                   dlAggregateLinks += `${data[i]['file']}?&title=${title}&type=video/${data[i]['type']}\n`
@@ -209,6 +209,7 @@ function generateDlBtn (type) {
       dlServerType = this.dataset['type']
       dlInProgress = true
       dlAggregateLinks = ''
+      dlQuality = document.getElementById('grabber__quality').value
       let mLink = document.getElementById('grabber__metadata-link')
       if (mLink) statusContainer.removeChild(mLink)
       // Metadata only for RapidVideo
