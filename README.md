@@ -12,7 +12,7 @@
 ## About
 Grabber allows you to fetch episode links from 9anime. It currently support grabbing videos from <strong>9anime Server</strong> (ex: Server F4) and <strong>RapidVideo</strong>. You can then couple these links with a download manager to download episodes in bulk.
 
-![](https://image.ibb.co/cF7iEa/Grabber.png)
+![](https://image.ibb.co/edZ9Sv/grabber.png)
 
 ## Download
 * [Greasyfork](https://greasyfork.org/en/scripts/31010-grabber)
