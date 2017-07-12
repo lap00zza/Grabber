@@ -1,3 +1,4 @@
+/* global test, expect */
 const utils = require('../src/utils')
 
 // autoFallback
@@ -25,11 +26,17 @@ test('fallback if there a lower quality', () => {
 })
 
 test('dont fallback when no lower quality', () => {
-  let mockData1 = [{label: '360p', file: '1'}, {label: '480p', file: '2'}]
+  let mockData1 = [
+    {label: '360p', file: '1'},
+    {label: '480p', file: '2'}
+  ]
   expect(utils.autoFallback('360p', mockData1)).toBeNull()
 })
 
 test('dont fallback if invalid preferred quality', () => {
-  let mockData1 = [{label: '360p', file: '1'}, {label: '480p', file: '2'}]
+  let mockData1 = [
+    {label: '360p', file: '1'},
+    {label: '480p', file: '2'}
+  ]
   expect(utils.autoFallback('555p', mockData1)).toBeNull()
 })
