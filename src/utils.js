@@ -154,3 +154,44 @@ export function ajaxGet (url, params) {
     xhr.send()
   })
 }
+
+// --- Implementation of fallback quality ---
+const quality = {
+  0: '360p',
+  1: '480p',
+  2: '720p',
+  3: '1080p'
+}
+
+const qualityReverseLookup = {
+  '360p': 0,
+  '480p': 1,
+  '720p': 2,
+  '1080p': 3
+}
+
+export function autoFallback (pref, episodes) {
+  // start determines from what quality we
+  // start falling back. Default is from
+  // 1080p.
+  if (!qualityReverseLookup[pref]) {
+    return null
+  }
+  let start = qualityReverseLookup[pref]
+
+  // i is for indexing "quality". Since there
+  // are only 4 possible value we start from
+  // "start" to 0.
+  for (let i = start; i >= 0; i--) {
+    // for each "quality" loop through episodes
+    // and see if we find a suitable match/
+    for (let j = 0; j < episodes.length; j++) {
+      if (episodes[j]['label'] === quality[i]) {
+        return episodes[j]
+      }
+    }
+  }
+
+  // Meaning fallback failed
+  return null
+}

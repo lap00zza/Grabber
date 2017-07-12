@@ -166,19 +166,33 @@ function processGrabber () {
           }
           api.videoLinks9a(data, resp['grabber'])
             .then(resp => {
+              let autoFallback = true
               // resp is of the format
               // {data: [{file: '', label: '', type: ''}], error: null, token: ''}
               // data contains the files array.
-              let data = resp['data']
-              for (let i = 0; i < data.length; i++) {
-                // NOTE: this part is basically making sure that we only get
-                // links for the quality we select. Not all of them. If the
-                // preferred quality is not present it wont grab any.
-                if (data[i]['label'] === dlQuality) {
-                  let title = utils.fileSafeString(`${animeName}-ep_${ep.num}-${data[i]['label']}`)
-                  dlAggregateLinks += `${data[i]['file']}?&title=${title}&type=video/${data[i]['type']}\n`
+
+              // If a quality we chose is not present, then it will
+              // automatically fallback to the next lower quality.
+              if (autoFallback) {
+                let episode = utils.autoFallback(dlQuality, resp['data'])
+                if (episode) {
+                  console.log(episode)
+                  let title = utils.fileSafeString(`${animeName}-ep_${ep.num}-${episode['label']}`)
+                  dlAggregateLinks += `${episode['file']}?&title=${title}&type=video/${episode['type']}\n`
+                } else {
+                  status(`<span class="grabber--fail">Failed ${ep.num}</span>`)
                 }
+              } else {
+                resp['data'].forEach(data => {
+                  // We only get links for the quality we select. Not all of them.
+                  // If the preferred quality is not present it wont grab any.
+                  if (data['label'] === dlQuality) {
+                    let title = utils.fileSafeString(`${animeName}-ep_${ep.num}-${data['label']}`)
+                    dlAggregateLinks += `${data['file']}?&title=${title}&type=video/${data['type']}\n`
+                  }
+                })
               }
+
               status('Completed ' + ep.num)
               requeue()
             })

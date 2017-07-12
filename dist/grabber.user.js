@@ -97,6 +97,7 @@ exports.getURL = getURL;
 exports.searchParams2Obj = searchParams2Obj;
 exports.mergeObject = mergeObject;
 exports.ajaxGet = ajaxGet;
+exports.autoFallback = autoFallback;
 /* eslint prefer-arrow-callback: "error" */
 /* eslint-env es6 */
 
@@ -252,6 +253,47 @@ function ajaxGet(url, params) {
     };
     xhr.send();
   });
+}
+
+// --- Implementation of fallback quality ---
+var quality = {
+  0: '360p',
+  1: '480p',
+  2: '720p',
+  3: '1080p'
+};
+
+var qualityReverseLookup = {
+  '360p': 0,
+  '480p': 1,
+  '720p': 2,
+  '1080p': 3
+};
+
+function autoFallback(pref, episodes) {
+  // start determines from what quality we
+  // start falling back. Default is from
+  // 1080p.
+  if (!qualityReverseLookup[pref]) {
+    return null;
+  }
+  var start = qualityReverseLookup[pref];
+
+  // i is for indexing "quality". Since there
+  // are only 4 possible value we start from
+  // "start" to 0.
+  for (var i = start; i >= 0; i--) {
+    // for each "quality" loop through episodes
+    // and see if we find a suitable match/
+    for (var j = 0; j < episodes.length; j++) {
+      if (episodes[j]['label'] === quality[i]) {
+        return episodes[j];
+      }
+    }
+  }
+
+  // Meaning fallback failed
+  return null;
 }
 
 /***/ }),
@@ -425,19 +467,33 @@ function processGrabber() {
           mobile: 0
         };
         api.videoLinks9a(data, resp['grabber']).then(function (resp) {
+          var autoFallback = true;
           // resp is of the format
           // {data: [{file: '', label: '', type: ''}], error: null, token: ''}
           // data contains the files array.
-          var data = resp['data'];
-          for (var i = 0; i < data.length; i++) {
-            // NOTE: this part is basically making sure that we only get
-            // links for the quality we select. Not all of them. If the
-            // preferred quality is not present it wont grab any.
-            if (data[i]['label'] === dlQuality) {
-              var title = utils.fileSafeString(animeName + '-ep_' + ep.num + '-' + data[i]['label']);
-              dlAggregateLinks += data[i]['file'] + '?&title=' + title + '&type=video/' + data[i]['type'] + '\n';
+
+          // If a quality we chose is not present, then it will
+          // automatically fallback to the next lower quality.
+          if (autoFallback) {
+            var episode = utils.autoFallback(dlQuality, resp['data']);
+            if (episode) {
+              console.log(episode);
+              var title = utils.fileSafeString(animeName + '-ep_' + ep.num + '-' + episode['label']);
+              dlAggregateLinks += episode['file'] + '?&title=' + title + '&type=video/' + episode['type'] + '\n';
+            } else {
+              status('<span class="grabber--fail">Failed ' + ep.num + '</span>');
             }
+          } else {
+            resp['data'].forEach(function (data) {
+              // We only get links for the quality we select. Not all of them.
+              // If the preferred quality is not present it wont grab any.
+              if (data['label'] === dlQuality) {
+                var _title = utils.fileSafeString(animeName + '-ep_' + ep.num + '-' + data['label']);
+                dlAggregateLinks += data['file'] + '?&title=' + _title + '&type=video/' + data['type'] + '\n';
+              }
+            });
           }
+
           status('Completed ' + ep.num);
           requeue();
         }).catch(function (err) {
