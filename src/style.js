@@ -12,7 +12,7 @@ let styles =
       border: 1px solid #555;
       border-radius: 2px;
       background-color: #16151c;
-      color: white;
+      color: #888;
       padding: 1px 5px 1px 5px;
       margin-top: 5px;
   }
@@ -22,16 +22,16 @@ let styles =
   .grabber__btn:active {
       background-color: #151515;
   }
-  
+
   .grabber__btn:disabled {
       color: #888;
       background-color: #222;
   }
-  
+
   .grabber__notification {
       padding: 0 10px;
       margin-bottom: 10px;
-      color: white;
+      color: #888;
   }
   .grabber__notification > span {
       display: inline-block;
@@ -45,15 +45,15 @@ let styles =
   #grabber__quality {
       background: inherit;
       border-radius: 2px;
-      color: white;
+      color: #888;
       border: 1px solid #555;
   }
-  
+
   #grabber__quality:disabled {
       background: #222;
       color: #888;
   }
-  
+
   #grabber__quality > option {
       background: #16151c;
   }
