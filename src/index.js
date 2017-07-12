@@ -44,6 +44,7 @@ statusContainer.innerHTML =
       <option value="720p">720p</option>
       <option value="1080p">1080p</option>
   </select>
+  ✓
   <span>Status:</span>
   <div id="grabber__status">ready! Press Grab All to start.</div>`
 servers.insertBefore(statusContainer, servers.firstChild)
