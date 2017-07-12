@@ -183,8 +183,8 @@ export function autoFallback (pref, episodes) {
   // are only 4 possible value we start from
   // "start" to 0.
   for (let i = start; i >= 0; i--) {
-    // for each "quality" loop through episodes
-    // and see if we find a suitable match/
+    // for each "quality" we loop through episodes
+    // and see if we find a suitable match.
     for (let j = 0; j < episodes.length; j++) {
       if (episodes[j]['label'] === quality[i]) {
         return episodes[j]
