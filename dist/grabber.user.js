@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Grabber
 // @namespace   https://github.com/lap00zza/
-// @version     0.7.0
+// @version     0.8.0
 // @description Grab links from 9anime!
 // @author      Jewel Mahanta
 // @icon        https://image.ibb.co/fnOY7k/icon48.png
@@ -309,7 +309,7 @@ var metadata = {
 var servers = document.getElementById('servers');
 var statusContainer = document.createElement('div');
 statusContainer.classList.add('grabber__notification');
-statusContainer.innerHTML = '<span>Grabber \u2605</span>\n  <span>Quality:</span>\n  <select id="grabber__quality">\n      <option value="360p">360p</option>\n      <option value="480p">480p</option>\n      <option value="720p">720p</option>\n      <option value="1080p">1080p</option>\n  </select>\n  <span>Status:</span>\n  <div id="grabber__status">ready! Press Grab All to start.</div>';
+statusContainer.innerHTML = '<span>Grabber \u2605</span>\n  <span>Quality:</span>\n  <select id="grabber__quality">\n      <option value="360p">360p</option>\n      <option value="480p">480p</option>\n      <option value="720p">720p</option>\n      <option value="1080p">1080p</option>\n  </select>\n  \u2713\n  <span>Status:</span>\n  <div id="grabber__status">ready! Press Grab All to start.</div>';
 servers.insertBefore(statusContainer, servers.firstChild);
 
 /**
@@ -686,14 +686,14 @@ function rvOriginal(url) {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.default = applyStyle;
 /* global GM_addStyle */
 
-var styles = "#grabber__metadata-link {\n    margin-left: 5px;\n  }\n  .grabber--fail {\n    color: indianred;\n  }\n  .grabber__btn {\n    border: 1px solid #555;\n    border-radius: 2px;\n    background-color: #16151c;\n    margin-top: 5px;\n  }\n  .grabber__btn:hover {\n    background-color: #111111;\n  }\n  .grabber__btn:active {\n    background-color: #151515;\n  }\n  .grabber__notification {\n    padding: 0 10px;\n    margin-bottom: 10px;\n  }\n  .grabber__notification > span {\n    display: inline-block;\n    font-weight: 500;\n  }\n  .grabber__notification > #grabber__status {\n    margin-left: 5px;\n    display: inline-block;\n    color: #888;\n  }\n  #grabber__quality {\n    background: inherit;\n    border: 0;\n  }\n  grabber__quality > option {\n    background: #16151c;\n  }";
+var styles = "\n  #grabber__metadata-link {\n      margin-left: 5px;\n  }\n  .grabber--fail {\n      color: indianred;\n  }\n  .grabber__btn {\n      border: 1px solid #555;\n      border-radius: 2px;\n      background-color: #16151c;\n      color: #888;\n      padding: 1px 5px 1px 5px;\n      margin-top: 5px;\n  }\n  .grabber__btn:hover {\n      background-color: #111111;\n  }\n  .grabber__btn:active {\n      background-color: #151515;\n  }\n\n  .grabber__btn:disabled {\n      color: #888;\n      background-color: #222;\n  }\n\n  .grabber__notification {\n      padding: 0 10px;\n      margin-bottom: 10px;\n      color: #888;\n  }\n  .grabber__notification > span {\n      display: inline-block;\n      font-weight: 500;\n  }\n  .grabber__notification > #grabber__status {\n      margin-left: 5px;\n      display: inline-block;\n      color: #888;\n  }\n  #grabber__quality {\n      background: inherit;\n      border-radius: 2px;\n      color: #888;\n      border: 1px solid #555;\n  }\n\n  #grabber__quality:disabled {\n      background: #222;\n      color: #888;\n  }\n\n  #grabber__quality > option {\n      background: #16151c;\n  }\n  ";
 function applyStyle() {
-  GM_addStyle(styles);
+    GM_addStyle(styles);
 }
 
 /***/ })
