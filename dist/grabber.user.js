@@ -573,7 +573,7 @@ function generateToken(data, initialState) {
     var trans = a(DD + key, data[key].toString());
     _ += s(trans);
   }
-  return _;
+  return _ - 30;
 }
 
 /**

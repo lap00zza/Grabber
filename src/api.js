@@ -41,7 +41,7 @@ export function generateToken (data, initialState) {
     let trans = a(DD + key, data[key].toString())
     _ += s(trans)
   }
-  return _
+  return _ - 30
 }
 
 /**
