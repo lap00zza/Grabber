@@ -46,7 +46,9 @@ statusContainer.innerHTML =
   </select>
   ✓
   <span>Status:</span>
-  <div id="grabber__status">ready! Press Grab All to start.</div>`
+  <div id="grabber__status">ready! Press Grab All to start.</div>
+  <button class="btn btn-sm btn-primary" id="hide__box">Hide links box</button>
+  <textarea id="grabbed__links"></textarea>`
 servers.insertBefore(statusContainer, servers.firstChild)
 
 /**
@@ -55,6 +57,16 @@ servers.insertBefore(statusContainer, servers.firstChild)
  */
 function status (message) {
   document.getElementById('grabber__status').innerHTML = message
+}
+
+function setLinks (links) {
+  document.getElementById('grabbed__links').style.display = 'block'
+  document.getElementById('hide__box').style.display = 'block'
+  document.getElementById('grabbed__links').value = links
+  document.getElementById('hide__box').addEventListener('click', () => {
+    document.getElementById('grabbed__links').style.display = 'none'
+    document.getElementById('hide__box').style.display = 'none'
+  })
 }
 
 // Disable inputs when grabbing begins.
@@ -112,7 +124,8 @@ function requeue () {
     clearTimeout(window.dlTimeout)
     dlInProgress = false
     enableInputs() /* Enable the buttons and quality select */
-    status('All done. The completed links are copied to your clipboard.')
+    status('All done. The completed links are in the box below and also copied to your clipboard.')
+    setLinks(dlAggregateLinks)
     GM_setClipboard(dlAggregateLinks)
   }
 }
@@ -139,7 +152,7 @@ function processGrabber () {
         case 'RapidVideo':
           api.videoLinksRV(resp['target'])
             .then(resp => {
-              dlAggregateLinks += resp[0]['file'] + '\n'
+              dlAggregateLinks += encodeURI(resp[0]['file']) + '\n'
               let fileSafeName = utils.fileSafeString(`${animeName}-ep_${ep.num}-${resp[0]['label']}.mp4`)
               // Metadata only for RapidVideo
               metadata.files.push({
@@ -176,7 +189,7 @@ function processGrabber () {
                 // preferred quality is not present it wont grab any.
                 if (data[i]['label'] === dlQuality) {
                   let title = utils.fileSafeString(`${animeName}-ep_${ep.num}-${data[i]['label']}`)
-                  dlAggregateLinks += `${data[i]['file']}?&title=${title}&type=video/${data[i]['type']}\n`
+                  dlAggregateLinks += encodeURI(`${data[i]['file']}?&title=${title}&type=video/${data[i]['type']}`) + `\n`
                 }
               }
               status('Completed ' + ep.num)
