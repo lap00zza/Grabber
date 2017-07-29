@@ -146,7 +146,7 @@ function processGrabber () {
         case 'RapidVideo':
           api.videoLinksRV(resp['target'])
             .then(resp => {
-              dlAggregateLinks += resp[0]['file'] + '\n'
+              dlAggregateLinks += encodeURI(resp[0]['file']) + '\n'
               let fileSafeName = utils.fileSafeString(`${animeName}-ep_${ep.num}-${resp[0]['label']}.mp4`)
               // Metadata only for RapidVideo
               metadata.files.push({
@@ -183,7 +183,7 @@ function processGrabber () {
                 // preferred quality is not present it wont grab any.
                 if (data[i]['label'] === dlQuality) {
                   let title = utils.fileSafeString(`${animeName}-ep_${ep.num}-${data[i]['label']}`)
-                  dlAggregateLinks += `${data[i]['file']}?&title=${title}&type=video/${data[i]['type']}\n`
+                  dlAggregateLinks += encodeURI(`${data[i]['file']}?&title=${title}&type=video/${data[i]['type']}`)+`\n`
                 }
               }
               status('Completed ' + ep.num)
