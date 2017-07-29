@@ -309,7 +309,7 @@ var metadata = {
 var servers = document.getElementById('servers');
 var statusContainer = document.createElement('div');
 statusContainer.classList.add('grabber__notification');
-statusContainer.innerHTML = '<span>Grabber \u2605</span>\n  <span>Quality:</span>\n  <select id="grabber__quality">\n      <option value="360p">360p</option>\n      <option value="480p">480p</option>\n      <option value="720p">720p</option>\n      <option value="1080p">1080p</option>\n  </select>\n  \u2713\n  <span>Status:</span>\n  <div id="grabber__status">ready! Press Grab All to start.</div>';
+statusContainer.innerHTML = '<span>Grabber \u2605</span>\n  <span>Quality:</span>\n  <select id="grabber__quality">\n      <option value="360p">360p</option>\n      <option value="480p">480p</option>\n      <option value="720p">720p</option>\n      <option value="1080p">1080p</option>\n  </select>\n  \u2713\n  <span>Status:</span>\n  <div id="grabber__status">ready! Press Grab All to start.</div>\n  <textarea id="grabbed__links"></textarea>';
 servers.insertBefore(statusContainer, servers.firstChild);
 
 /**
@@ -318,6 +318,11 @@ servers.insertBefore(statusContainer, servers.firstChild);
  */
 function status(message) {
   document.getElementById('grabber__status').innerHTML = message;
+}
+
+function setLinks(links) {
+  document.getElementById('grabbed__links').style.display = 'block';
+  document.getElementById('grabbed__links').value = links;
 }
 
 // Disable inputs when grabbing begins.
@@ -375,7 +380,8 @@ function requeue() {
     clearTimeout(window.dlTimeout);
     dlInProgress = false;
     enableInputs(); /* Enable the buttons and quality select */
-    status('All done. The completed links are copied to your clipboard.');
+    status('All done. The completed links are in the box below and also copied to your clipboard.');
+    setLinks(dlAggregateLinks);
     GM_setClipboard(dlAggregateLinks);
   }
 }
@@ -691,7 +697,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = applyStyle;
 /* global GM_addStyle */
 
-var styles = "\n  #grabber__metadata-link {\n      margin-left: 5px;\n  }\n  .grabber--fail {\n      color: indianred;\n  }\n  .grabber__btn {\n      border: 1px solid #555;\n      border-radius: 2px;\n      background-color: #16151c;\n      color: #888;\n      padding: 1px 5px 1px 5px;\n      margin-top: 5px;\n  }\n  .grabber__btn:hover {\n      background-color: #111111;\n  }\n  .grabber__btn:active {\n      background-color: #151515;\n  }\n\n  .grabber__btn:disabled {\n      color: #888;\n      background-color: #222;\n  }\n\n  .grabber__notification {\n      padding: 0 10px;\n      margin-bottom: 10px;\n      color: #888;\n  }\n  .grabber__notification > span {\n      display: inline-block;\n      font-weight: 500;\n  }\n  .grabber__notification > #grabber__status {\n      margin-left: 5px;\n      display: inline-block;\n      color: #888;\n  }\n  #grabber__quality {\n      background: inherit;\n      border-radius: 2px;\n      color: #888;\n      border: 1px solid #555;\n  }\n\n  #grabber__quality:disabled {\n      background: #222;\n      color: #888;\n  }\n\n  #grabber__quality > option {\n      background: #16151c;\n  }\n  ";
+var styles = "\n  #grabber__metadata-link {\n      margin-left: 5px;\n  }\n  .grabber--fail {\n      color: indianred;\n  }\n  .grabber__btn {\n      border: 1px solid #555;\n      border-radius: 2px;\n      background-color: #16151c;\n      color: #888;\n      padding: 1px 5px 1px 5px;\n      margin-top: 5px;\n  }\n  .grabber__btn:hover {\n      background-color: #111111;\n  }\n  .grabber__btn:active {\n      background-color: #151515;\n  }\n\n  .grabber__btn:disabled {\n      color: #888;\n      background-color: #222;\n  }\n\n  .grabber__notification {\n      padding: 0 10px;\n      margin-bottom: 10px;\n      color: #888;\n  }\n  .grabber__notification > span {\n      display: inline-block;\n      font-weight: 500;\n  }\n  .grabber__notification > #grabber__status {\n      margin-left: 5px;\n      display: inline-block;\n      color: #888;\n  }\n  #grabber__quality {\n      background: inherit;\n      border-radius: 2px;\n      color: #888;\n      border: 1px solid #555;\n  }\n\n  #grabbed__links {\n     display: none;\n     width: 100%;\n     height: 200px;\n     background: #0f0e13;\n     color: #9a9a9a;\n     border: none;\n     margin: 10px 0;\n     padding: 10px;\n  }\n\n  #grabber__quality:disabled {\n      background: #222;\n      color: #888;\n  }\n\n  #grabber__quality > option {\n      background: #16151c;\n  }\n  ";
 function applyStyle() {
     GM_addStyle(styles);
 }

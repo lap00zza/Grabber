@@ -46,7 +46,8 @@ statusContainer.innerHTML =
   </select>
   ✓
   <span>Status:</span>
-  <div id="grabber__status">ready! Press Grab All to start.</div>`
+  <div id="grabber__status">ready! Press Grab All to start.</div>
+  <textarea id="grabbed__links"></textarea>`
 servers.insertBefore(statusContainer, servers.firstChild)
 
 /**
@@ -55,6 +56,11 @@ servers.insertBefore(statusContainer, servers.firstChild)
  */
 function status (message) {
   document.getElementById('grabber__status').innerHTML = message
+}
+
+function setLinks (links) {
+  document.getElementById('grabbed__links').style.display = 'block'
+  document.getElementById('grabbed__links').value = links
 }
 
 // Disable inputs when grabbing begins.
@@ -112,7 +118,8 @@ function requeue () {
     clearTimeout(window.dlTimeout)
     dlInProgress = false
     enableInputs() /* Enable the buttons and quality select */
-    status('All done. The completed links are copied to your clipboard.')
+    status('All done. The completed links are in the box below and also copied to your clipboard.')
+    setLinks(dlAggregateLinks)
     GM_setClipboard(dlAggregateLinks)
   }
 }

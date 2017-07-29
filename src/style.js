@@ -49,6 +49,17 @@ let styles =
       border: 1px solid #555;
   }
 
+  #grabbed__links {
+     display: none;
+     width: 100%;
+     height: 200px;
+     background: #0f0e13;
+     color: #9a9a9a;
+     border: none;
+     margin: 10px 0;
+     padding: 10px;
+  }
+
   #grabber__quality:disabled {
       background: #222;
       color: #888;
