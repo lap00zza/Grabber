@@ -49,26 +49,30 @@ let styles =
       border: 1px solid #555;
   }
 
-  #hide__box {
-      display: none;
+  .links_header {
+    color: #5e5e5e;
   }
-
-  #grabbed__links {
-     display: none;
+  #grabber__links-box {
+    display: none;
+    border-bottom: 1px solid #1e1c25;
+    padding-bottom: 10px;
+  }
+  #grabber__links {
      width: 100%;
      height: 200px;
      background: #0f0e13;
      color: #9a9a9a;
-     border: none;
-     margin: 10px 0;
+     border: 5px solid #1e1c25;
+     border-radius: 5px;
+     margin-top: 5px;
      padding: 10px;
+     resize: none;
   }
 
   #grabber__quality:disabled {
       background: #222;
       color: #888;
   }
-
   #grabber__quality > option {
       background: #16151c;
   }

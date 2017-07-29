@@ -47,9 +47,24 @@ statusContainer.innerHTML =
   ✓
   <span>Status:</span>
   <div id="grabber__status">ready! Press Grab All to start.</div>
-  <button class="btn btn-sm btn-primary" id="hide__box">Hide links box</button>
-  <textarea id="grabbed__links"></textarea>`
+  <div id="grabber__links-box">
+    <span class="links_header">The completed links are in the box below and also copied to your clipboard.</span>
+    <textarea id="grabber__links" readonly></textarea>
+    <button class="grabber__btn" id="grabber__copy">Copy to clipboard</button>
+    <button class="grabber__btn" id="grabber__hide-links-box">Hide links</button>
+  </div>`
+
+// Attach the status container
 servers.insertBefore(statusContainer, servers.firstChild)
+
+// Add functionality for te copy button and the hide links button
+document.getElementById('grabber__hide-links-box').addEventListener('click', () => {
+  document.getElementById('grabber__links-box').style.display = 'none'
+})
+document.getElementById('grabber__copy').addEventListener('click', () => {
+  document.getElementById('grabber__links').select()
+  document.execCommand('copy')
+})
 
 /**
  * A small helper function to add a message on the status bar.
@@ -59,14 +74,13 @@ function status (message) {
   document.getElementById('grabber__status').innerHTML = message
 }
 
+/**
+ * Set the download links on the textarea and show the links-box
+ * @param links
+ */
 function setLinks (links) {
-  document.getElementById('grabbed__links').style.display = 'block'
-  document.getElementById('hide__box').style.display = 'block'
-  document.getElementById('grabbed__links').value = links
-  document.getElementById('hide__box').addEventListener('click', () => {
-    document.getElementById('grabbed__links').style.display = 'none'
-    document.getElementById('hide__box').style.display = 'none'
-  })
+  document.getElementById('grabber__links').value = links
+  document.getElementById('grabber__links-box').style.display = 'block'
 }
 
 // Disable inputs when grabbing begins.
@@ -124,7 +138,7 @@ function requeue () {
     clearTimeout(window.dlTimeout)
     dlInProgress = false
     enableInputs() /* Enable the buttons and quality select */
-    status('All done. The completed links are in the box below and also copied to your clipboard.')
+    status('All done~')
     setLinks(dlAggregateLinks)
     GM_setClipboard(dlAggregateLinks)
   }
