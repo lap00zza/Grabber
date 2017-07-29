@@ -49,6 +49,10 @@ let styles =
       border: 1px solid #555;
   }
 
+  #hide__box {
+      display: none;
+  }
+
   #grabbed__links {
      display: none;
      width: 100%;

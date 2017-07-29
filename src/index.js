@@ -47,6 +47,7 @@ statusContainer.innerHTML =
   ✓
   <span>Status:</span>
   <div id="grabber__status">ready! Press Grab All to start.</div>
+  <button class="btn btn-sm btn-primary" id="hide__box">Hide links box</button>
   <textarea id="grabbed__links"></textarea>`
 servers.insertBefore(statusContainer, servers.firstChild)
 
@@ -60,7 +61,12 @@ function status (message) {
 
 function setLinks (links) {
   document.getElementById('grabbed__links').style.display = 'block'
+  document.getElementById('hide__box').style.display = 'block'
   document.getElementById('grabbed__links').value = links
+  document.getElementById('hide__box').addEventListener('click', function() {
+    document.getElementById('grabbed__links').style.display = 'none'
+    document.getElementById('hide__box').style.display = 'none'
+  })
 }
 
 // Disable inputs when grabbing begins.
