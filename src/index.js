@@ -63,7 +63,7 @@ function setLinks (links) {
   document.getElementById('grabbed__links').style.display = 'block'
   document.getElementById('hide__box').style.display = 'block'
   document.getElementById('grabbed__links').value = links
-  document.getElementById('hide__box').addEventListener('click', function() {
+  document.getElementById('hide__box').addEventListener('click', () => {
     document.getElementById('grabbed__links').style.display = 'none'
     document.getElementById('hide__box').style.display = 'none'
   })
