@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Grabber
 // @namespace   https://github.com/lap00zza/
-// @version     0.9.0
+// @version     1.0.0
 // @description Grab links from 9anime!
 // @author      Jewel Mahanta
 // @icon        https://image.ibb.co/fnOY7k/icon48.png
@@ -320,7 +320,7 @@ document.getElementById('grabber__hide-links-box').addEventListener('click', fun
 });
 document.getElementById('grabber__copy').addEventListener('click', function () {
   document.getElementById('grabber__links').select();
-  document.execCommand("copy");
+  document.execCommand('copy');
 });
 
 /**
