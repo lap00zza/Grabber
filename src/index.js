@@ -183,7 +183,7 @@ function processGrabber () {
                 // preferred quality is not present it wont grab any.
                 if (data[i]['label'] === dlQuality) {
                   let title = utils.fileSafeString(`${animeName}-ep_${ep.num}-${data[i]['label']}`)
-                  dlAggregateLinks += encodeURI(`${data[i]['file']}?&title=${title}&type=video/${data[i]['type']}`)+`\n`
+                  dlAggregateLinks += encodeURI(`${data[i]['file']}?&title=${title}&type=video/${data[i]['type']}`) + `\n`
                 }
               }
               status('Completed ' + ep.num)
